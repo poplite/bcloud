@@ -325,7 +325,7 @@ class SigninDialog(Gtk.Dialog):
                     vcodetype = query['vcodetype']
                     codeString = query['codeString']
                     dialog = SigninVcodeDialog(self, username, cookie,
-                                               tokens['token'], codeString,
+                                               tokens, codeString,
                                                vcodetype)
                     response = dialog.run()
                     verifycode = dialog.get_vcode()
