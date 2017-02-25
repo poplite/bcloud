@@ -293,6 +293,18 @@ class SigninDialog(Gtk.Dialog):
                 self.update_profile(username, password, cookie, tokens,
                                     dump=True)
 
+        def on_get_auth_cookie(info, error=None):
+            if error or not info:
+                logger.error('SigninDialog.on_get_auth_cookie: %s, %s' %
+                             (info, error))
+                self.signin_failed(
+                        _('Fail to get auth cookie, please try again'))
+            else:
+                cookie.load_list(info)
+                self.signin_button.set_label(_('Get bdstoken...'))
+                gutil.async_call(auth.get_bdstoken, cookie,
+                                 callback=on_get_bdstoken)
+
         def on_post_login(info, error=None):
             if error or not info:
                 logger.error('SigninDialog.on_post_login: %s, %s' %
@@ -303,9 +315,9 @@ class SigninDialog(Gtk.Dialog):
                 errno, query = info
                 if errno == 0:
                     cookie.load_list(query)
-                    self.signin_button.set_label(_('Get bdstoken...'))
-                    gutil.async_call(auth.get_bdstoken, cookie,
-                                     callback=on_get_bdstoken)
+                    self.signin_button.set_label(_('Get auth cookie...'))
+                    gutil.async_call(auth.get_auth_cookie, cookie, callback=on_get_auth_cookie)
+
                 # 257: 需要输入验证码
                 elif errno == 257:
                     nonlocal verifycode

@@ -267,6 +267,32 @@ def post_login(cookie, tokens, username, password, rsakey, verifycode='',
         return (-1, None)
     return (-1, None)
 
+def get_auth_cookie(cookie):
+    '''通过重定向获得授权cookie
+    
+    重定向的链接开头为:
+    http://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&stoken=xxx
+    '''
+    url = ''.join([
+        const.PASSPORT_LOGIN_V3,
+        'auth/?return_type=5',
+        '&tpl=netdisk&u=http%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome'
+    ])
+    headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.PAN_REFERER,
+    }
+    req = net.urlopen_without_redirect(url, headers=headers)
+    if req and req.headers.get("Location"):
+        redirect_url = req.headers.get("Location")
+        redirect_req = net.urlopen_without_redirect(redirect_url, headers={'Cookie': cookie.header_output()})
+        if redirect_req:
+            return redirect_req.headers.get_all('Set-Cookie')
+        else:
+            return None
+    else:
+        return None
+
 def parse_bdstoken(content):
     '''从页面中解析出bdstoken等信息.
     
