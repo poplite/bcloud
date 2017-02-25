@@ -542,7 +542,7 @@ def list_dir(cookie, tokens, path, page=1, num=100):
     ])
     req = net.urlopen(url, headers={
         'Content-type': const.CONTENT_FORM_UTF8,
-        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'PANWEB', 'cflag'),
+        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'PANWEB', 'cflag', 'SCRC', 'STOKEN'),
     })
     if req:
         content = req.data
@@ -717,7 +717,7 @@ def get_download_link(cookie, tokens, path):
     dlink = metas['info'][0]['dlink']
     url = '{0}&cflg={1}'.format(dlink, cookie.get('cflag').value)
     req = net.urlopen_without_redirect(url, headers={
-        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'cflag'),
+        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'cflag', 'SCRC', 'STOKEN'),
         'Accept': const.ACCEPT_HTML,
     })
     if not req:
@@ -907,7 +907,7 @@ def get_metas(cookie, tokens, filelist, dlink=True):
         data = ('dlink=0&target=' +
                 encoder.encode_uri_component(json.dumps(filelist)))
     req = net.urlopen(url, headers={
-        'Cookie': cookie.sub_output('BDUSS'),
+        'Cookie': cookie.sub_output('BDUSS', 'SCRC', 'STOKEN'),
         'Content-type': const.CONTENT_FORM,
         }, data=data.encode())
     if req:
