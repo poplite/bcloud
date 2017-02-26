@@ -108,7 +108,7 @@ class SigninVcodeDialog(Gtk.Dialog):
                          self.vcodetype, callback=_refresh_vcode)
 
     def check_entry(self, *args):
-        if len(self.vcode_entry.get_text()) == 4:
+        if len(self.vcode_entry.get_text()) == 2 or len(self.vcode_entry.get_text()) == 4:
             self.response(Gtk.ResponseType.OK)
 
     def on_vcode_refresh_clicked(self, button):
@@ -331,7 +331,7 @@ class SigninDialog(Gtk.Dialog):
                     verifycode = dialog.get_vcode()
                     codeString = dialog.codeString
                     dialog.destroy()
-                    if not verifycode or len(verifycode) != 4:
+                    if not (verifycode or len(verifycode) == 2 or len(verifycode) == 4):
                         self.signin_failed(_('Please input verification code!'))
                         return
                     else:
@@ -395,7 +395,7 @@ class SigninDialog(Gtk.Dialog):
                     verifycode = dialog.get_vcode()
                     codeString = dialog.codeString
                     dialog.destroy()
-                    if not verifycode or len(verifycode) != 4:
+                    if not (verifycode or len(verifycode) == 2 or len(verifycode) == 4):
                         self.signin_failed(_('Please input verification code!'))
                         return
                     else:
