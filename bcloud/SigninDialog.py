@@ -19,7 +19,8 @@ from bcloud.RequestCookie import RequestCookie
 from bcloud import util
 from bcloud import Widgets
 
-DELTA = 1 * 24 * 60 * 60   # 1 days
+DELTA = 365 * 24 * 60 * 60   # 1 year
+USE_CACHE_AUTH = True # use cached auth info
 
 
 class SigninVcodeDialog(Gtk.Dialog):
@@ -446,7 +447,7 @@ class SigninDialog(Gtk.Dialog):
         username = self.username_combo.get_child().get_text()
         password = self.password_entry.get_text()
         # 使用本地的缓存token, 有效期是三天
-        if not self.password_changed and self.signin_check.get_active():
+        if not self.password_changed and (self.signin_check.get_active() or USE_CACHE_AUTH):
             cookie, tokens = self.load_auth(username)
             if cookie and tokens:
                 self.update_profile(username, password, cookie, tokens)
