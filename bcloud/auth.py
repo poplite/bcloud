@@ -23,7 +23,7 @@ from bcloud.RequestCookie import RequestCookie
 from bcloud import util
 
 def get_ppui_logintime():
-    '''ppui_ligintime 这个字段, 是一个随机数.'''
+    '''ppui_logintime 这个字段, 是一个随机数.'''
     return str(random.randint(52000, 58535))
 
 def get_BAIDUID():
@@ -160,7 +160,7 @@ def refresh_signin_vcode(cookie, tokens, vcodetype):
         '&token=', tokens['token'],
         '&tpl=pp&apiver=v3',
         '&tt=', util.timestamp(),
-        '&fr=ligin',
+        '&fr=login',
         '&vcodetype=', encoder.encode_uri(vcodetype),
     ])
     headers={
