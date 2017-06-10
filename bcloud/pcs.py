@@ -116,7 +116,7 @@ def list_share_files(cookie, tokens, uk, shareid, dirname, page=1):
         return list_share_single_file(cookie, tokens, uk, shareid)
     url = ''.join([
         const.PAN_URL,
-        'share/list?channel=chunlei&clienttype=0&web=1&num=50',
+        'share/list?channel=chunlei&clienttype=0&web=1&app_id=250528&num=50',
         '&t=', util.timestamp(),
         '&page=', str(page),
         '&dir=', encoder.encode_uri_component(dirname),
@@ -427,7 +427,7 @@ def list_trash(cookie, tokens, path='/', page=1, num=100):
     '''
     url = ''.join([
         const.PAN_API_URL,
-        'recycle/list?channel=chunlei&clienttype=0&web=1',
+        'recycle/list?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&num=', str(num),
         '&t=', util.timestamp(),
         '&dir=', encoder.encode_uri_component(path),
@@ -524,7 +524,7 @@ def list_dir(cookie, tokens, path, page=1, num=100):
     timestamp = util.timestamp()
     url = ''.join([
         const.PAN_API_URL,
-        'list?channel=chunlei&clienttype=0&web=1',
+        'list?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&num=', str(num),
         '&t=', timestamp,
         '&page=', str(page),
@@ -663,7 +663,6 @@ def copy(cookie, tokens, filelist):
     else:
         return None
 
-
 def get_category(cookie, tokens, category, page=1):
     '''获取一个分类中的所有文件信息, 比如音乐/图片
 
@@ -679,14 +678,13 @@ def get_category(cookie, tokens, category, page=1):
     timestamp = util.timestamp()
     url = ''.join([
         const.PAN_API_URL,
-        'categorylist?channel=chunlei&clienttype=0&web=1',
+        'categorylist?channel=chunlei&clienttype=0&web=1&app_id=250528&showempty=0',
         '&category=', str(category),
-        '&pri=-1&num=100',
+        '&num=100',
         '&t=', timestamp,
         '&page=', str(page),
         '&order=time&desc=1',
-        '&_=', timestamp,
-        '&bdstoken=', cookie.get('STOKEN').value,
+        '&bdstoken=',tokens['bdstoken'],
     ])
     req = net.urlopen(url, headers={'Cookie': cookie.header_output()})
     if req:
