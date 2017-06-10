@@ -33,7 +33,7 @@ def get_BAIDUID():
     '''
     url = ''.join([
         const.PASSPORT_URL,
-        '?getapi&tpl=mn&apiver=v3',
+        '?getapi&tpl=netdisk&subpro=netdisk_web&apiver=v3',
         '&tt=', util.timestamp(),
         '&class=login&logintype=basicLogin',
     ])
@@ -62,7 +62,7 @@ def get_token(cookie):
     '''
     url = ''.join([
         const.PASSPORT_URL,
-        '?getapi&tpl=pp&apiver=v3',
+        '?getapi&tpl=netdisk&subpro=netdisk_web&apiver=v3',
         '&tt=', util.timestamp(),
         '&class=login&logintype=basicLogin',
     ])
@@ -88,7 +88,7 @@ def get_UBI(cookie, tokens):
         const.PASSPORT_URL,
         '?loginhistory',
         '&token=', tokens['token'],
-        '&tpl=pp&apiver=v3',
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3',
         '&tt=', util.timestamp(),
     ])
     headers={
@@ -113,7 +113,7 @@ def check_login(cookie, tokens, username):
         const.PASSPORT_URL,
         '?logincheck',
         '&token=', tokens['token'],
-        '&tpl=mm&apiver=v3',
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3',
         '&tt=', util.timestamp(),
         '&username=', encoder.encode_uri_component(username),
         '&isphone=false',
@@ -158,7 +158,7 @@ def refresh_signin_vcode(cookie, tokens, vcodetype):
         const.PASSPORT_BASE,
         'v2/?reggetcodestr',
         '&token=', tokens['token'],
-        '&tpl=pp&apiver=v3',
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3',
         '&tt=', util.timestamp(),
         '&fr=login',
         '&vcodetype=', encoder.encode_uri(vcodetype),
@@ -210,7 +210,7 @@ def get_public_key(cookie, tokens):
     url = ''.join([
         const.PASSPORT_BASE, 'v2/getpublickey',
         '?token=', tokens['token'],
-        '&tpl=pp&apiver=v3&tt=', util.timestamp(),
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3&tt=', util.timestamp(),
     ])
     headers={
         'Cookie': cookie.header_output(),
@@ -237,19 +237,21 @@ def post_login(cookie, tokens, username, password, rsakey, verifycode='',
     '''
     url = const.PASSPORT_LOGIN
     data = ''.join([
-        'staticpage=https%3A%2F%2Fpassport.baidu.com%2Fstatic%2Fpasspc-account%2Fhtml%2Fv3Jump.html',
-        '&charset=UTF-8',
+        'staticpage=https%3A%2F%2Fpan.baidu.com%2Fres%2Fstatic%2Fthirdparty%2Fpass_v3_jump.html',
+        '&tpl=netdisk&detect=1&foreignusername=&countrycode=',
+        '&subpro=netdisk_web',
+        '&charset=utf-8',
         '&token=', tokens['token'],
-        '&tpl=pp&subpro=&apiver=v3',
+        '&apiver=v3',
         '&tt=', util.timestamp(),
         '&codestring=', codestring,
-        '&safeflg=0&u=http%3A%2F%2Fpassport.baidu.com%2F',
+        '&safeflg=0&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome',
         '&isPhone=',
         '&quick_user=0&logintype=basicLogin&logLoginType=pc_loginBasic&idc=',
         '&loginmerge=true',
         '&username=', encoder.encode_uri_component(username),
         '&password=', encoder.encode_uri_component(password),
-        '&verifycode=', verifycode,
+        '&verifycode=', encoder.encode_uri_component(verifycode),
         '&mem_pass=on',
         '&rsakey=', rsakey,
         '&crypttype=12',
@@ -299,7 +301,7 @@ def get_auth_cookie(cookie):
     url = ''.join([
         const.PASSPORT_LOGIN_V3,
         'auth/?return_type=5',
-        '&tpl=netdisk&u=http%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome'
+        '&tpl=netdisk&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome'
     ])
     headers={
         'Cookie': cookie.header_output(),
