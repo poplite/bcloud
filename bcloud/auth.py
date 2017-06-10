@@ -178,6 +178,29 @@ def refresh_signin_vcode(cookie, tokens, vcodetype):
             logger.error(traceback.format_exc())
     return None
 
+def check_signin_vcode(cookie, tokens, verifycode, codeString):
+    '''检查验证码是否正确.'''
+    url = ''.join([
+        const.PASSPORT_BASE,
+        'v2/?checkvcode',
+        '&token=', tokens['token'],
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3',
+        '&tt=', util.timestamp(),
+        '&verifycode=', encoder.encode_uri_component(verifycode),
+        '&codestring=', codeString,
+        ])
+    headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.REFERER,
+    }
+    req = net.urlopen(url, headers=headers)
+    if req:
+        content = req.data.decode()
+        query = json.loads(content)
+        return query['errInfo']
+    else:
+        return None
+
 def get_public_key(cookie, tokens):
     '''获取RSA公钥, 这个用于加密用户的密码
     

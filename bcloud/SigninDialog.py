@@ -46,7 +46,6 @@ class SigninVcodeDialog(Gtk.Dialog):
         box.pack_start(button_box, True, True, 0)
 
         self.vcode_entry = Gtk.Entry()
-        self.vcode_entry.connect('activate', self.check_entry)
         button_box.pack_start(self.vcode_entry, True, True, 0)
 
         if Config.GTK_GE_312:
@@ -67,7 +66,15 @@ class SigninVcodeDialog(Gtk.Dialog):
         vcode_confirm.props.valign = Gtk.Align.END
         box.pack_start(vcode_confirm, False, False, 10)
 
+        self.infobar = Gtk.InfoBar()
+        self.infobar.set_message_type(Gtk.MessageType.ERROR)
+        box.pack_end(self.infobar, False, False, 0)
+        info_content = self.infobar.get_content_area()
+        self.info_label = Gtk.Label.new()
+        info_content.pack_start(self.info_label, False, False, 0)
+
         box.show_all()
+        self.infobar.hide()
         self.loading_spin.hide()
 
         gutil.async_call(auth.get_signin_vcode, cookie, codeString,
@@ -107,15 +114,31 @@ class SigninVcodeDialog(Gtk.Dialog):
         gutil.async_call(auth.refresh_signin_vcode, self.cookie, self.tokens,
                          self.vcodetype, callback=_refresh_vcode)
 
-    def check_entry(self, *args):
-        if len(self.vcode_entry.get_text()) == 2 or len(self.vcode_entry.get_text()) == 4:
-            self.response(Gtk.ResponseType.OK)
+    def check_vcode(self, *args):
+        def _check_vcode(info, error=None):
+            if not info or error:
+                logger.error('SigninVcode.check_vcode: %s, %s.' %
+                             (info, error))
+                return
+            if int(info['no']) == 500002:
+                self.info_label.set_text('Verfication code is incorrect.')
+                self.infobar.show_all()
+            else:
+                self.response(Gtk.ResponseType.OK)
+
+        verifycode = self.vcode_entry.get_text()
+        if not (len(verifycode) == 2 or len(verifycode) == 4):
+            self.info_label.set_text("The length of verfication code is not correct.")
+            self.infobar.show_all()
+            return
+        gutil.async_call(auth.check_signin_vcode, self.cookie, self.tokens,
+                         verifycode, self.codeString, callback=_check_vcode)
 
     def on_vcode_refresh_clicked(self, button):
         self.refresh_vcode()
 
     def on_vcode_confirm_clicked(self, button):
-        self.check_entry()
+        self.check_vcode()
 
 
 class SigninDialog(Gtk.Dialog):
