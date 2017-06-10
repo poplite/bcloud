@@ -663,6 +663,73 @@ def copy(cookie, tokens, filelist):
     else:
         return None
 
+def unzip_view(cookie, tokens, path, subpath="/", start=0, limit=100):
+    '''查看压缩包的文件列表
+
+    path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
+    subpath - 压缩包内的相对路径，默认是根目录“/”
+    start - 从第几个文件开始
+    limit - 一次最大列出文件数
+    '''
+    url = ''.join([
+        const.PAN_API_URL,
+        'unzip/list?app_id=250528&channel=chunlei&clienttype=0&web=1',
+        '&path=', encoder.encode_uri_component(path),
+        '&subpath=', encoder.encode_uri_component(subpath),
+        '&start=', str(start),
+        '&limit=', str(limit),
+        '&bdstoken=', tokens['bdstoken'],
+    ])
+    req = net.urlopen(url, headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.SHARE_REFERER,
+    })
+    if req:
+        content = req.data
+        return json.loads(content.decode())
+    else:
+        return None
+
+def unzip_download(cookie, path, subpath):
+    '''获得压缩包里单独文件的下载链接
+
+    path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
+    subpath - 需要下载文件的相对路径
+    '''
+    url = ''.join([
+        const.PCS_URL,
+        'file?method=unzipdownload&app_id=250528',
+        '&path=', encoder.encode_uri_component(path),
+        '&subpath=', encoder.encode_uri_component(subpath),
+    ])
+    req = net.urlopen_without_redirect(url, headers={'Cookie': cookie.header_output()})
+    if req:
+        return req.getheader('Location')
+
+def unzip_extract(cookie, path, topath, subpath="/"):
+    '''解压压缩包到指定路径
+
+    path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
+    subpath - 压缩包内的相对路径，默认是根目录“/”
+    topath - 要解压到的绝对路径
+    '''
+    url = ''.join([
+        const.PCS_URL,
+        'file?method=unzipcopy&app_id=250528',
+        '&path=', encoder.encode_uri_component(path),
+        '&subpath=', encoder.encode_uri_component(subpath),
+        '&topath=', encoder.encode_uri_component(topath),
+    ])
+    req = net.urlopen(url, headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.SHARE_REFERER,
+    })
+    if req:
+        content = req.data
+        return json.loads(content.decode())
+    else:
+        return None
+
 def get_category(cookie, tokens, category, page=1):
     '''获取一个分类中的所有文件信息, 比如音乐/图片
 
