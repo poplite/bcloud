@@ -226,7 +226,7 @@ class SharePage(Gtk.Box):
                     else:
                         return
                     pwd_dialog.destroy()
-                    gutil.async_call(pcs.verify_share_password, self.uk,
+                    gutil.async_call(pcs.verify_share_password, self.app.cookie, self.uk,
                                      self.shareid, pwd,
                                      callback=on_verify_password)
                 else:

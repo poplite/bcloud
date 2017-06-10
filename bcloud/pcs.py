@@ -150,25 +150,23 @@ def list_share_single_file(cookie, tokens, uk, shareid):
         script_sel = CSS('script')
         scripts = script_sel(tree)
         for script in scripts:
-            if (script.text and (script.text.find('viewsingle_param') > -1 or
-                script.text.find('mpan.viewlist_param') > -1)):
+            if script.text and (script.text.find('yunData.setData') > -1 or script.text.find('window.yunData') > -1):
                 break
         else:
             logger.warn('pcs.parse_share_page: failed to get filelist, %s', url)
             return None
-        start = script.text.find('viewsingle_param.list=JSON.parse(')
-        end = script.text.find(');mpan.viewsingle_param.username')
-        if start == -1 or end == -1:
-            start = script.text.find('listArr:JSON.parse(')
-            end = script.text.find('),rootPath:')
-            if start == -1 or end == -1:
+        type1 = ',"third":0,"bdstoken":'
+        type2 = ',"uk":'
+        start = script.text.find('"file_list":')
+        end = script.text.find(type1)
+        if start == -1: return None
+        if end == -1:
+            end = script.text.find(type2)
+            if end == -1:
                 return None
-            else:
-                json_str = script.text[start+19:end]
-        else:
-            json_str = script.text[start+33:end]
+        json_str = script.text[start+12:end]
         try:
-            return json.loads(json.loads(json_str))
+            return json.loads(json_str)
         except ValueError:
             logger.warn(traceback.format_exc())
             return None
@@ -266,7 +264,7 @@ def enable_private_share(cookie, tokens, fid_list):
     else:
         return None, passwd
 
-def verify_share_password(uk, shareid, pwd, vcode=''):
+def verify_share_password(cookie, uk, shareid, pwd, vcode=''):
     '''验证共享文件的密码.
 
     如果密码正确, 会在返回的请求头里加入一个cookie: BDCLND
@@ -276,13 +274,15 @@ def verify_share_password(uk, shareid, pwd, vcode=''):
     '''
     url = ''.join([
         const.PAN_URL,
-        'share/verify?&clienttype=0&web=1&channel=chunlei',
+        'share/verify?&clienttype=0&web=1&channel=chunlei&app_id=250528',
         '&shareid=', shareid,
         '&uk=', uk,
     ])
     data = 'pwd={0}&vcode={1}'.format(pwd, vcode)
 
-    req = net.urlopen(url, data=data.encode())
+    req = net.urlopen(url, headers = {
+        'Cookie': cookie.header_output()
+        }, data=data.encode())
     if req:
         content = req.data.decode()
         info = json.loads(content)
@@ -367,7 +367,7 @@ def get_share_url_with_dirname(uk, shareid, dirname):
            const.PAN_URL, 'wap/link',
            '?shareid=', shareid,
            '&uk=', uk,
-           '&dir=', encoder.encode_uri_component(dirname),
+           '#list/path=', encoder.encode_uri_component(dirname),
            '&third=0',
         ])
 
