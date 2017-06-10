@@ -11,7 +11,7 @@
 from bcloud import Config
 _ = Config._
 
-BAIDU_URL = 'http://www.baidu.com/'
+BAIDU_URL = 'https://www.baidu.com/'
 PASSPORT_BASE = 'https://passport.baidu.com/'
 PASSPORT_URL = PASSPORT_BASE + 'v2/api/'
 PASSPORT_LOGIN = PASSPORT_BASE + 'v2/api/?login'
@@ -19,13 +19,13 @@ PASSPORT_LOGIN_V3 = PASSPORT_BASE + 'v3/login/api/'
 REFERER = PASSPORT_BASE + 'v2/?login'
 #USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0'
 USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.2.0'
-PAN_URL = 'http://pan.baidu.com/'
+PAN_URL = 'https://pan.baidu.com/'
 PAN_API_URL = PAN_URL + 'api/'
-PAN_REFERER = 'http://pan.baidu.com/disk/home'
+PAN_REFERER = 'https://pan.baidu.com/disk/home'
 SHARE_REFERER = PAN_URL + 'share/manage'
 
 # 一般的服务器名
-PCS_URL = 'http://pcs.baidu.com/rest/2.0/pcs/'
+PCS_URL = 'https://pcs.baidu.com/rest/2.0/pcs/'
 # 上传的服务器名
 PCS_URL_C = 'http://c.pcs.baidu.com/rest/2.0/pcs/'
 PCS_URLS_C = 'https://c.pcs.baidu.com/rest/2.0/pcs/'
