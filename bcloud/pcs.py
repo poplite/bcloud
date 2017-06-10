@@ -354,10 +354,9 @@ def get_share_uk_and_shareid(cookie, url):
 
 def get_share_dirname(url):
     '''从url中提取出当前的目录'''
-    dirname_match = re.search('(dir|path)=([^&]+)',
-                              encoder.decode_uri_component(url))
+    dirname_match = re.search('(dir|path)=([^&]+)', url)
     if dirname_match:
-        return dirname_match.group(2)
+        return encoder.decode_uri_component(dirname_match.group(2))
     else:
         return None
 
