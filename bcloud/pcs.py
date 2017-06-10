@@ -142,8 +142,8 @@ def list_share_single_file(cookie, tokens, uk, shareid):
     '''获取单独共享出来的文件.
 
     目前支持的链接格式有:
-      * http://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
-      * http://pan.baidu.com/share/link?uk=202032639&shareid=420754
+      * http(s)://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
+      * http(s)://pan.baidu.com/share/link?uk=202032639&shareid=420754
     '''
     def parse_share_page(content):
         tree = html.fromstring(content)
@@ -301,18 +301,13 @@ def get_share_uk_and_shareid(cookie, url):
     如果失败, 就返回None
 
     目前支持的链接格式有:
-      * http://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
-      * http://pan.baidu.com/share/link?uk=202032639&shareid=420754
-      * http://pan.baidu.com/s/1i3iQY48
+      * http(s)://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
+      * http(s)://pan.baidu.com/share/link?uk=202032639&shareid=420754
+      * http(s)://pan.baidu.com/s/1i3iQY48
     '''
     def parse_share_uk(content):
-        '''代码片段如下:
-
-        yunData.SHARE_ID = "677200861";
-        yunData.SHARE_UK = "1295729848";
-        '''
-        uk_reg = re.compile('yunData.SHARE_UK\s*=\s*"(\d+)"')
-        shareid_reg = re.compile('yunData.SHARE_ID\s*=\s*"(\d+)"')
+        uk_reg = re.compile('"uk":(\d+)\,"task_key"')
+        shareid_reg = re.compile('"shareid":(\d+)\,"sign"')
         uk_match = uk_reg.search(content)
         shareid_match = shareid_reg.search(content)
         if uk_match and shareid_match:
@@ -342,7 +337,7 @@ def get_share_uk_and_shareid(cookie, url):
             return True, uk, shareid
 
     # 处理短链接
-    if url.startswith('http://pan.baidu.com/s/'):
+    if url.startswith('http://pan.baidu.com/s/') or url.startswith('https://pan.baidu.com/s/'):
         req = net.urlopen(url, headers={
             'Cookie': cookie.header_output(),
         })
