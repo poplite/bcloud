@@ -19,7 +19,7 @@ from bcloud.RequestCookie import RequestCookie
 from bcloud import util
 from bcloud import Widgets
 
-DELTA = 1 * 24 * 60 * 60   # 1 days
+DELTA = 6 * 30 * 24 * 60 * 60   # 6 months
 
 
 class SigninVcodeDialog(Gtk.Dialog):
@@ -156,6 +156,7 @@ class SigninDialog(Gtk.Dialog):
         
         self.conf = Config.load_conf()
         self.profile = None
+        self.cache_login = False
 
         box = self.get_content_area()
         box.set_spacing(8)
@@ -196,6 +197,16 @@ class SigninDialog(Gtk.Dialog):
             self.signin_check.props.margin_left = 20
         box.pack_start(self.signin_check, False, False, 0)
         self.signin_check.connect('toggled', self.on_signin_check_toggled)
+
+        self.cachelogin_check = Gtk.CheckButton.new_with_label(
+                _('Use cached login info'))
+        self.cachelogin_check.set_sensitive(True)
+        if Config.GTK_GE_312:
+            self.cachelogin_check.props.margin_start = 20
+        else:
+            self.cachelogin_check.props.margin_left = 20
+        box.pack_start(self.cachelogin_check, False, False, 0)
+        self.cachelogin_check.connect('toggled', self.on_cachelogin_check_toggled)
 
         self.signin_button = Gtk.Button.new_with_label(_('Sign in'))
         self.signin_button.props.margin_top = 10
@@ -251,6 +262,7 @@ class SigninDialog(Gtk.Dialog):
                 break
         self.profile = gutil.load_profile(username)
         self.password_entry.set_text(self.profile['password'])
+        self.cachelogin_check.set_active(self.profile['cache-login'])
         if gutil.keyring_available:
             self.remember_check.set_active(self.profile['remember-password'])
             if self.profile['remember-password']:
@@ -285,6 +297,16 @@ class SigninDialog(Gtk.Dialog):
         if self.profile:
             self.profile['auto-signin'] = self.signin_check.get_active()
             gutil.dump_profile(self.profile)
+
+    def on_cachelogin_check_toggled(self, button):
+        if button.get_active():
+            self.cache_login = True
+            self.remember_check.set_sensitive(False)
+            if not self.signin_check.get_sensitive():
+                self.signin_check.set_sensitive(True)
+        else:
+            self.cache_login = False
+            self.remember_check.set_sensitive(True)
 
     def on_signin_button_clicked(self, button):
         if (len(self.password_entry.get_text()) <= 1 or
@@ -448,7 +470,7 @@ class SigninDialog(Gtk.Dialog):
                 nonlocal tokens
                 hosupport, token = info
                 cookie.load_list(hosupport)
-                cookie.load('cflag=65535%3A1; PANWEB=1;')
+                cookie.load('cflag=15%3A3; PANWEB=1;')
                 tokens['token'] = token
                 self.signin_button.set_label(_('Get UBI...'))
                 gutil.async_call(auth.get_UBI, cookie, tokens,
@@ -468,8 +490,8 @@ class SigninDialog(Gtk.Dialog):
 
         username = self.username_combo.get_child().get_text()
         password = self.password_entry.get_text()
-        # 使用本地的缓存token, 有效期是三天
-        if not self.password_changed and self.signin_check.get_active():
+        # 判断是否使用缓存授权信息
+        if self.cache_login:
             cookie, tokens = self.load_auth(username)
             if cookie and tokens:
                 self.update_profile(username, password, cookie, tokens)
@@ -485,7 +507,7 @@ class SigninDialog(Gtk.Dialog):
 
     def load_auth(self, username):
         auth_file = os.path.join(Config.get_tmp_path(username), 'auth.json')
-        # 如果授权信息被缓存, 并且没过期, 就直接读取它.
+        # 如果缓存授权信息没过期, 就直接读取它.
         if os.path.exists(auth_file):
             if time.time() - os.stat(auth_file).st_mtime < DELTA:
                 with open(auth_file) as fh:
@@ -505,6 +527,7 @@ class SigninDialog(Gtk.Dialog):
         self.profile['username'] = username
         self.profile['remember-password'] = self.remember_check.get_active()
         self.profile['auto-signin'] = self.signin_check.get_active()
+        self.profile['cache-login'] = self.cachelogin_check.get_active()
         if self.profile['remember-password']:
             self.profile['password'] = password
         else:

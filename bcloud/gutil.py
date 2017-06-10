@@ -48,6 +48,7 @@ DEFAULT_PROFILE = {
     'password': '',
     'remember-password': False,
     'auto-signin': False,
+    'cache-login': False,
 
     # 使用流媒体方式播放视频
     'use-streaming': True,
