@@ -114,7 +114,7 @@ class SigninVcodeDialog(Gtk.Dialog):
         gutil.async_call(auth.refresh_signin_vcode, self.cookie, self.tokens,
                          self.vcodetype, callback=_refresh_vcode)
 
-    def check_vcode(self, *args):
+    def check_vcode(self):
         def _check_vcode(info, error=None):
             if not info or error:
                 logger.error('SigninVcode.check_vcode: %s, %s.' %
