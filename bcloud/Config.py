@@ -102,6 +102,13 @@ def get_tmp_path(profile_name):
         os.makedirs(path, exist_ok=True)
     return path
 
+def check_auth_file(profile_name):
+    '''检查这个帐户的缓存授权信息是否存在，若存在返回文件路径'''
+    auth_file = os.path.join(CACHE_DIR, profile_name, 'tmp', 'auth.json')
+    if os.path.exists(auth_file):
+        return auth_file
+    return None
+
 def load_color_schema():
     if not os.path.exists(COLOR_SCHEMA):
         return []

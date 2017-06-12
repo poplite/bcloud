@@ -175,7 +175,6 @@ class SigninDialog(Gtk.Dialog):
         self.password_entry.set_placeholder_text(_('Password ..'))
         self.password_entry.props.visibility = False
         self.password_entry.connect('changed', self.on_password_entry_changed)
-        self.password_entry.connect('activate', self.on_password_entry_activate)
         box.pack_start(self.password_entry, False, False, 0)
 
         self.remember_check = Gtk.CheckButton.new_with_label(
@@ -301,29 +300,23 @@ class SigninDialog(Gtk.Dialog):
     def on_cachelogin_check_toggled(self, button):
         if button.get_active():
             self.cache_login = True
+            self.password_entry.set_sensitive(False)
             self.remember_check.set_sensitive(False)
             if not self.signin_check.get_sensitive():
                 self.signin_check.set_sensitive(True)
         else:
             self.cache_login = False
+            self.password_entry.set_sensitive(True)
             self.remember_check.set_sensitive(True)
 
     def on_signin_button_clicked(self, button):
-        if (len(self.password_entry.get_text()) <= 1 or
-                not self.username_combo.get_child().get_text()):
+        if (not self.username_combo.get_child().get_text() or
+                (len(self.password_entry.get_text()) <= 1 and
+                not self.cache_login)):
             return
         self.infobar.hide()
         button.set_label(_('In process...'))
         button.set_sensitive(False)
-        self.signin()
-
-    def on_password_entry_activate(self, entry):
-        if (len(self.password_entry.get_text()) <= 1 or
-                not self.username_combo.get_child().get_text()):
-            return
-        self.infobar.hide()
-        self.signin_button.set_label(_('In process...'))
-        self.signin_button.set_sensitive(False)
         self.signin()
 
     def signin(self):
@@ -506,9 +499,9 @@ class SigninDialog(Gtk.Dialog):
         gutil.async_call(auth.get_BAIDUID, callback=on_get_BAIDUID)
 
     def load_auth(self, username):
-        auth_file = os.path.join(Config.get_tmp_path(username), 'auth.json')
+        auth_file = Config.check_auth_file(username)
         # 如果缓存授权信息没过期, 就直接读取它.
-        if os.path.exists(auth_file):
+        if auth_file:
             if time.time() - os.stat(auth_file).st_mtime < DELTA:
                 with open(auth_file) as fh:
                     c, tokens = json.load(fh)
