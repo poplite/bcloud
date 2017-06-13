@@ -324,15 +324,16 @@ def get_share_uk_and_shareid(cookie, url):
         shareid = shareid_match.group(1)
         return uk, shareid
 
-    # 识别加密链接
     req = net.urlopen_without_redirect(url, headers={
         'Cookie': cookie.header_output(),
     })
     if req and req.headers.get('Location'):
-        init_url = req.headers.get('Location')
-        if init_url.find('share/init') > -1:
-            uk, shareid = parse_uk_from_url(init_url)
-            return True, uk, shareid
+        url = req.headers.get('Location')
+
+    # 处理加密链接
+    if url.find('share/init') > -1 or url.find('wap/init') > -1:
+        uk, shareid = parse_uk_from_url(url)
+        return True, uk, shareid
 
     # 处理短链接
     if url.startswith('http://pan.baidu.com/s/') or url.startswith('https://pan.baidu.com/s/'):
