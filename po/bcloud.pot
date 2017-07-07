@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-25 20:22+0800\n"
+"POT-Creation-Date: 2017-07-07 11:35+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -690,111 +690,123 @@ msgstr ""
 msgid "Verification.."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:127
+#: ../bcloud/SigninDialog.py:124
+msgid "Verfication code is incorrect"
+msgstr ""
+
+#: ../bcloud/SigninDialog.py:131
+msgid "The length of verfication code is not correct"
+msgstr ""
+
+#: ../bcloud/SigninDialog.py:150
 msgid "Sign in now"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:146
+#: ../bcloud/SigninDialog.py:170
 msgid "Username/Email/Phone..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:151
+#: ../bcloud/SigninDialog.py:175
 msgid "Password .."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:158
+#: ../bcloud/SigninDialog.py:181
 msgid "Remember Password"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:168
+#: ../bcloud/SigninDialog.py:191
 msgid "Signin Automatically"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:177 ../bcloud/SigninDialog.py:246
+#: ../bcloud/SigninDialog.py:201
+msgid "Use cached login info"
+msgstr ""
+
+#: ../bcloud/SigninDialog.py:210 ../bcloud/SigninDialog.py:280
 msgid "Sign in"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:187
+#: ../bcloud/SigninDialog.py:220
 msgid "Failed to sign in, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:271 ../bcloud/SigninDialog.py:280
+#: ../bcloud/SigninDialog.py:318
 msgid "In process..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:289
+#: ../bcloud/SigninDialog.py:327
 msgid "Failed to get bdstoken!"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:301
+#: ../bcloud/SigninDialog.py:339
 msgid "Fail to get auth cookie, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:304 ../bcloud/SigninDialog.py:338
+#: ../bcloud/SigninDialog.py:342 ../bcloud/SigninDialog.py:376
 msgid "Get bdstoken..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:313
+#: ../bcloud/SigninDialog.py:351
 msgid "Login failed, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:318
+#: ../bcloud/SigninDialog.py:356
 msgid "Get auth cookie..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:335 ../bcloud/SigninDialog.py:399
+#: ../bcloud/SigninDialog.py:373 ../bcloud/SigninDialog.py:437
 msgid "Please input verification code!"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:347
+#: ../bcloud/SigninDialog.py:385
 msgid "Password error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:351
+#: ../bcloud/SigninDialog.py:389
 msgid "Verfication code error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:357
+#: ../bcloud/SigninDialog.py:395
 msgid "Does not support SMS/Email verification!"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:361
+#: ../bcloud/SigninDialog.py:399
 msgid "Unknown error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:368
+#: ../bcloud/SigninDialog.py:406
 msgid "Failed to request public key, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:383
+#: ../bcloud/SigninDialog.py:421
 msgid "Failed to check login, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:412
+#: ../bcloud/SigninDialog.py:450
 msgid "Failed to get UBI, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:415
+#: ../bcloud/SigninDialog.py:453
 msgid "Check login"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:423
+#: ../bcloud/SigninDialog.py:461
 msgid "Failed to get token, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:430
+#: ../bcloud/SigninDialog.py:468
 msgid "Get UBI..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:439
+#: ../bcloud/SigninDialog.py:477
 msgid "Failed to get BAIDUID cookie, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:442
+#: ../bcloud/SigninDialog.py:480
 msgid "Get TOKEN..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:460
+#: ../bcloud/SigninDialog.py:498
 msgid "Get BAIDUID..."
 msgstr ""
 

@@ -121,14 +121,14 @@ class SigninVcodeDialog(Gtk.Dialog):
                              (info, error))
                 return
             if int(info['no']) == 500002:
-                self.info_label.set_text('Verfication code is incorrect.')
+                self.info_label.set_text(_('Verfication code is incorrect'))
                 self.infobar.show_all()
             else:
                 self.response(Gtk.ResponseType.OK)
 
         verifycode = self.vcode_entry.get_text()
         if not (len(verifycode) == 2 or len(verifycode) == 4):
-            self.info_label.set_text("The length of verfication code is not correct.")
+            self.info_label.set_text(_("The length of verfication code is not correct"))
             self.infobar.show_all()
             return
         gutil.async_call(auth.check_signin_vcode, self.cookie, self.tokens,
