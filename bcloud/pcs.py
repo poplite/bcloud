@@ -292,7 +292,7 @@ def verify_share_password(cookie, uk, shareid, pwd, vcode=''):
     return None
 
 def get_share_uk_and_shareid(cookie, url):
-    '''从共享链接中提示uk和shareid.
+    '''从共享链接中提取uk和shareid.
 
     如果共享文件需要输入密码, 就会将need_pwd设为True
     如果成功, 返回(need_pwd, uk, shareid)
