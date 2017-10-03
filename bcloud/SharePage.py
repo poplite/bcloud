@@ -206,7 +206,8 @@ class SharePage(Gtk.Box):
                              (pwd_cookie, error))
             else:
                 self.app.cookie.load_list(pwd_cookie)
-                self.load_url()
+                gutil.async_call(pcs.get_share_uk_and_shareid, self.app.cookie,
+                                 self.curr_url, callback=on_get_share_uk)
 
         def on_get_share_uk(info, error=None):
             if error or not info or not info[1]:
@@ -216,9 +217,10 @@ class SharePage(Gtk.Box):
                 self.url_entry.props.secondary_icon_name = REFRESH_ICON
                 return
             else:
-                need_pwd, self.uk, self.shareid = info
+                need_pwd = info[0]
                 # 输入密码:
                 if need_pwd:
+                    surl = info[1]
                     pwd_dialog = PwdDialog(self.app)
                     response = pwd_dialog.run()
                     if response == Gtk.ResponseType.OK:
@@ -226,10 +228,10 @@ class SharePage(Gtk.Box):
                     else:
                         return
                     pwd_dialog.destroy()
-                    gutil.async_call(pcs.verify_share_password, self.app.cookie, self.uk,
-                                     self.shareid, pwd,
-                                     callback=on_verify_password)
+                    gutil.async_call(pcs.verify_share_password, self.app.cookie, surl,
+                                     pwd, callback=on_verify_password)
                 else:
+                    self.uk, self.shareid = info[1:]
                     self.load_url()
 
         self.liststore.clear()
@@ -284,7 +286,10 @@ class SharePage(Gtk.Box):
                 ])
 
             for file_ in filelist:
-                isdir = file_['isdir'] == '1'
+                if file_['isdir'] == '1' or file_['isdir'] == 1:
+                    isdir = True
+                else:
+                    isdir = False
                 pixbuf, type_ = self.app.mime.get(file_['path'], isdir,
                                                   icon_size=ICON_SIZE)
                 large_pixbuf, type_ = self.app.mime.get(file_['path'], isdir,

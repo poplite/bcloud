@@ -120,7 +120,10 @@ def urlopen_without_redirect(url, headers={}, data=None, retries=RETRIES):
     parse_result = urllib.parse.urlparse(url)
     for i in range(retries):
         try:
-            conn = http.client.HTTPConnection(parse_result.netloc)
+            if parse_result.scheme == 'https':
+                conn = http.client.HTTPSConnection(parse_result.netloc)
+            else:
+                conn = http.client.HTTPConnection(parse_result.netloc)
             if data:
                 conn.request('POST', url, body=data, headers=headers_merged)
             else:

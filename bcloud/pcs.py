@@ -262,7 +262,7 @@ def enable_private_share(cookie, tokens, fid_list):
     else:
         return None, passwd
 
-def verify_share_password(cookie, uk, shareid, pwd, vcode=''):
+def verify_share_password(cookie, surl, pwd, vcode='', vcode_str=''):
     '''验证共享文件的密码.
 
     如果密码正确, 会在返回的请求头里加入一个cookie: BDCLND
@@ -272,11 +272,10 @@ def verify_share_password(cookie, uk, shareid, pwd, vcode=''):
     '''
     url = ''.join([
         const.PAN_URL,
-        'share/verify?&clienttype=0&web=1&channel=chunlei&app_id=250528',
-        '&shareid=', shareid,
-        '&uk=', uk,
+        'share/verify?&clienttype=0&web=1&bdstoken=null&channel=chunlei&app_id=250528',
+        '&surl=', surl,
     ])
-    data = 'pwd={0}&vcode={1}'.format(pwd, vcode)
+    data = 'pwd={0}&vcode={1}&vcode_str={2}'.format(pwd, vcode, vcode_str)
 
     req = net.urlopen(url, headers = {
         'Cookie': cookie.header_output()
@@ -295,7 +294,7 @@ def get_share_uk_and_shareid(cookie, url):
     '''从共享链接中提取uk和shareid.
 
     如果共享文件需要输入密码, 就会将need_pwd设为True
-    如果成功, 返回(need_pwd, uk, shareid)
+    如果成功, 返回(need_pwd, surl)
     如果失败, 就返回None
 
     目前支持的链接格式有:
@@ -324,16 +323,28 @@ def get_share_uk_and_shareid(cookie, url):
         shareid = shareid_match.group(1)
         return uk, shareid
 
-    req = net.urlopen_without_redirect(url, headers={
-        'Cookie': cookie.header_output(),
-    })
-    if req and req.headers.get('Location'):
-        url = req.headers.get('Location')
+    # 处理重定向
+    MAX_REDIRECT = 5
+    for i in range(0, MAX_REDIRECT):
+        req = net.urlopen_without_redirect(url, headers={
+            'Cookie': cookie.header_output(),
+        })
+        if req:
+            if (req.status == 301 or req.status == 302) and req.headers.get('Location'):
+                url = req.headers.get('Location')
+                continue
+        break
 
     # 处理加密链接
     if url.find('share/init') > -1 or url.find('wap/init') > -1:
-        uk, shareid = parse_uk_from_url(url)
-        return True, uk, shareid
+        surl_reg = re.compile('init\?surl=(.+)')
+        surl_match = surl_reg.search(url)
+        if not surl_match:
+            return None
+        surl = surl_match.group(1)
+        return True, surl
+        #uk, shareid = parse_uk_from_url(url)
+        #return True, uk, shareid
 
     # 处理短链接
     if url.startswith('http://pan.baidu.com/s/') or url.startswith('https://pan.baidu.com/s/'):
