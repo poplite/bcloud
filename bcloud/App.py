@@ -42,6 +42,7 @@ from bcloud.FileWatcher import WatchFileChange
 
 try:
 # Ubuntu Unity uses appindicator instead of status icon
+    gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3 as AppIndicator
 except ImportError:
     logger.debug(traceback.format_exc())
