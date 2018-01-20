@@ -63,7 +63,9 @@ class ForbiddenHandler(urllib.request.HTTPErrorProcessor):
 def urlopen_simple(url, retries=RETRIES, timeout=TIMEOUT):
     for i in range(retries):
         try:
-            return urllib.request.urlopen(url, timeout=timeout)
+            opener = urllib.request.build_opener(ForbiddenHandler)
+            opener.addheaders = [(k, v) for k,v in default_headers.items()]
+            return opener.open(url, timeout=timeout)
         except OSError:
             logger.error(traceback.format_exc())
             
