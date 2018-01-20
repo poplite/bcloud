@@ -794,6 +794,56 @@ def get_download_link(cookie, tokens, path):
     else:
         return req.getheader('Location', url)
 
+def get_dlink_by_fsid(cookie, tokens, fidlist):
+    '''根据fs_id获得dlink, 需要timestamp和sign参数.
+
+    fidlist - fs_id列表, 可以只有一个fs_id.
+    '''
+    url = ''.join([
+        const.PAN_API_URL,
+        'download?type=dlink',
+        '&channel=chunlei&web=1&app_id=250528clienttype=0',
+        '&fidlist=', encoder.encode_uri_component(json.dumps(fidlist)),
+        '&sign=', tokens['sign'],
+        '&timestamp=', str(tokens['timestamp']),
+        '&bdstoken=', tokens['bdstoken'],
+    ])
+    req = net.urlopen(url, headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.SHARE_REFERER,
+    })
+    if req:
+        content = req.data
+        return json.loads(content.decode())
+    else:
+        return None
+
+def batch_download(cookie, tokens, fidlist):
+    '''批量下载多个文件, 需要timestamp和sign参数.
+
+    所有文件会被打包成一个zip压缩包.
+
+    fidlist - 需要批量下载的文件的fs_id列表.
+    '''
+    url = ''.join([
+        const.PAN_API_URL,
+        'download?type=batch',
+        '&channel=chunlei&web=1&app_id=250528clienttype=0',
+        '&fidlist=', encoder.encode_uri_component(json.dumps(fidlist)),
+        '&sign=', tokens['sign'],
+        '&timestamp=', str(tokens['timestamp']),
+        '&bdstoken=', tokens['bdstoken'],
+    ])
+    req = net.urlopen(url, headers={
+        'Cookie': cookie.header_output(),
+        'Referer': const.SHARE_REFERER,
+    })
+    if req:
+        content = req.data
+        return json.loads(content.decode())
+    else:
+        return None
+
 def stream_download(cookie, tokens, path):
     '''下载流媒体文件.
 
