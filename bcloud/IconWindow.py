@@ -420,7 +420,7 @@ class IconWindow(Gtk.ScrolledWindow):
             '''先保存播放列表到临时目录, 再调用播放器直接打开这个播放列表
 
             如果pls为None的话, 说明没能得到播放列表, 这时就需要使用之前的方
-            法, 先得琶视频地址, 再用播放器去打开它.
+            法, 先得到视频地址, 再用播放器去打开它.
             '''
             if error or not pls or b'error_code' in pls:
                 gutil.async_call(pcs.get_download_link, self.app.cookie,
