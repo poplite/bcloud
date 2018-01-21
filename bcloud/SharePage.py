@@ -71,6 +71,7 @@ class SharePage(Gtk.Box):
         self.page = 1  # 从1开始计数
         self.has_next = False
         self.dirname = ''
+        self.surl = ''
 
         if Config.GTK_GE_312:
             self.headerbar = Gtk.HeaderBar()
@@ -210,7 +211,7 @@ class SharePage(Gtk.Box):
                                  self.curr_url, callback=on_get_share_uk)
 
         def on_get_share_uk(info, error=None):
-            if error or not info or not info[1]:
+            if error or not info:
                 logger.error('SharePage.reload: %s, %s' % (error, info))
                 self.app.toast(_('Invalid link: {0}!'.format(self.curr_url)))
                 self.has_next = False
@@ -218,9 +219,12 @@ class SharePage(Gtk.Box):
                 return
             else:
                 need_pwd = info[0]
+                if info[1]:
+                    self.surl = info[1]
+                if len(info) == 4 and info[2] and info[3]:
+                    self.uk, self.shareid = info[2:4]
                 # 输入密码:
                 if need_pwd:
-                    surl = info[1]
                     pwd_dialog = PwdDialog(self.app)
                     response = pwd_dialog.run()
                     if response == Gtk.ResponseType.OK:
@@ -228,10 +232,10 @@ class SharePage(Gtk.Box):
                     else:
                         return
                     pwd_dialog.destroy()
-                    gutil.async_call(pcs.verify_share_password, self.app.cookie, surl,
-                                     pwd, callback=on_verify_password)
+                    gutil.async_call(pcs.verify_share_password, self.app.cookie, self.uk,
+                                     self.shareid, self.surl, pwd,
+                                     callback=on_verify_password)
                 else:
-                    self.uk, self.shareid = info[1:]
                     self.load_url()
 
         self.liststore.clear()
@@ -326,7 +330,7 @@ class SharePage(Gtk.Box):
         timestamp = time.time()
         self.url_entry.timestamp = timestamp
         gutil.async_call(pcs.list_share_files, self.app.cookie, self.app.tokens,
-                         self.uk, self.shareid, self.dirname, self.page,
+                         self.uk, self.shareid, self.surl, self.dirname, self.page,
                          callback=on_load_url)
 
     def on_cloud_button_clicked(self, button):
@@ -422,7 +426,7 @@ class SharePage(Gtk.Box):
         if self.liststore[tree_path][ISDIR_COL]:
             dirname = self.liststore[tree_path][PATH_COL]
             new_url = pcs.get_share_url_with_dirname(self.uk, self.shareid,
-                                                     dirname)
+                                                     self.surl, dirname)
             self.url_entry.set_text(new_url)
             self.reload()
 

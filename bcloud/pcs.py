@@ -103,7 +103,7 @@ def list_share(cookie, tokens, uk, page=1):
     else:
         return None
 
-def list_share_files(cookie, tokens, uk, shareid, dirname, page=1):
+def list_share_files(cookie, tokens, uk, shareid, surl, dirname, page=1):
     '''列举出用户共享的某一个目录中的文件信息
 
     这个对所有用户都有效
@@ -113,7 +113,7 @@ def list_share_files(cookie, tokens, uk, shareid, dirname, page=1):
                这里, 需要调用list_share_single_file()
     '''
     if not dirname:
-        return list_share_single_file(cookie, tokens, uk, shareid)
+        return list_share_single_file(cookie, tokens, uk, shareid, surl)
     url = ''.join([
         const.PAN_URL,
         'share/list?channel=chunlei&clienttype=0&web=1&app_id=250528&num=50',
@@ -136,14 +136,16 @@ def list_share_files(cookie, tokens, uk, shareid, dirname, page=1):
         info = json.loads(content.decode())
         if info['errno'] == 0:
             return info['list']
-    return list_share_single_file(cookie, tokens, uk, shareid)
+    return list_share_single_file(cookie, tokens, uk, shareid, surl)
 
-def list_share_single_file(cookie, tokens, uk, shareid):
+def list_share_single_file(cookie, tokens, uk, shareid, surl):
     '''获取单独共享出来的文件.
 
     目前支持的链接格式有:
       * http(s)://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
       * http(s)://pan.baidu.com/share/link?uk=202032639&shareid=420754
+      * http(s)://pan.baidu.com/wap/init?surl=pMi4xab
+      * http(s)://pan.baidu.com/share/init?surl=pMi4xab
     '''
     def parse_share_page(content):
         tree = html.fromstring(content)
@@ -171,12 +173,11 @@ def list_share_single_file(cookie, tokens, uk, shareid):
             logger.warn(traceback.format_exc())
             return None
 
-    url = ''.join([
-        const.PAN_URL, 'wap/link',
-        '?shareid=', shareid,
-        '&uk=', uk,
-        '&third=0',
-    ])
+    url = ''.join([const.PAN_URL, 'wap/link', '?third=0'])
+    if surl:
+        url = '{0}&surl={1}'.format(url, surl)
+    else:
+        url = '{0}&uk={1}&shareid={2}'.format(url, uk, shareid)
     req = net.urlopen(url, headers={
         'Cookie': cookie.header_output(),
         'Referer': const.SHARE_REFERER,
@@ -262,7 +263,7 @@ def enable_private_share(cookie, tokens, fid_list):
     else:
         return None, passwd
 
-def verify_share_password(cookie, surl, pwd, vcode='', vcode_str=''):
+def verify_share_password(cookie, uk, shareid, surl, pwd, vcode='', vcode_str=''):
     '''验证共享文件的密码.
 
     如果密码正确, 会在返回的请求头里加入一个cookie: BDCLND
@@ -272,9 +273,12 @@ def verify_share_password(cookie, surl, pwd, vcode='', vcode_str=''):
     '''
     url = ''.join([
         const.PAN_URL,
-        'share/verify?&clienttype=0&web=1&bdstoken=null&channel=chunlei&app_id=250528',
-        '&surl=', surl,
+        'share/verify?clienttype=0&web=1&bdstoken=null&channel=chunlei&app_id=250528',
     ])
+    if surl:
+        url = '{0}&surl={1}'.format(url, surl)
+    else:
+        url = '{0}&uk={1}&shareid={2}'.format(url, uk, shareid)
     data = 'pwd={0}&vcode={1}&vcode_str={2}'.format(pwd, vcode, vcode_str)
 
     req = net.urlopen(url, headers = {
@@ -293,22 +297,40 @@ def verify_share_password(cookie, surl, pwd, vcode='', vcode_str=''):
 def get_share_uk_and_shareid(cookie, url):
     '''从共享链接中提取uk和shareid.
 
-    如果共享文件需要输入密码, 就会将need_pwd设为True
-    如果成功, 返回(need_pwd, surl)
-    如果失败, 就返回None
-
     目前支持的链接格式有:
       * http(s)://pan.baidu.com/wap/link?uk=202032639&shareid=420754&third=0
       * http(s)://pan.baidu.com/share/link?uk=202032639&shareid=420754
+      * http(s)://pan.baidu.com/wap/init?surl=pMi4xab
+      * http(s)://pan.baidu.com/share/init?surl=pMi4xab
       * http(s)://pan.baidu.com/s/1i3iQY48
+
+    有三种返回值: (need_pwd, surl), (need_pwd, surl, uk, shareid)和None
+
+    如果共享文件需要输入密码, 就会将need_pwd设为True
+    如果链接属于第三种或第四种, 返回(True, surl), 需要验证密码后才能提取uk和shareid
+    如果是其他链接, 返回(need_pwd, surl, uk, shareid)
+    如果失败, 就返回None
+
     '''
     def parse_share_uk(content):
-        uk_reg = re.compile('"uk":(\d+)\,"task_key"')
-        shareid_reg = re.compile('"shareid":(\d+)\,"sign"')
+        uk_reg = re.compile(',"uk":(\d+),')
+        shareid_reg = re.compile(',"shareid":(\d+),')
         uk_match = uk_reg.search(content)
         shareid_match = shareid_reg.search(content)
         if uk_match and shareid_match:
-            return False, uk_match.group(1), shareid_match.group(1)
+            return uk_match.group(1), shareid_match.group(1)
+        else:
+            return None, None
+
+    def parse_surl_from_url(url):
+        surl_reg1 = re.compile('surl=(.+)')
+        surl_match1 = surl_reg1.search(url)
+        surl_reg2 = re.compile('/s/(.+)')
+        surl_match2 = surl_reg2.search(url)
+        if surl_match1:
+            return surl_match1.group(1)
+        elif surl_match2:
+            return surl_match2.group(1)
         else:
             return None
 
@@ -337,25 +359,27 @@ def get_share_uk_and_shareid(cookie, url):
 
     # 处理加密链接
     if url.find('share/init') > -1 or url.find('wap/init') > -1:
-        surl_reg = re.compile('init\?surl=(.+)')
-        surl_match = surl_reg.search(url)
-        if not surl_match:
-            return None
-        surl = surl_match.group(1)
-        return True, surl
-        #uk, shareid = parse_uk_from_url(url)
-        #return True, uk, shareid
+        if url.find('init?surl') > -1:
+            surl = parse_surl_from_url(url)
+            return True, surl
+        else:
+            uk, shareid = parse_uk_from_url(url)
+            return True, None, uk, shareid
 
     # 处理短链接
     if url.startswith('http://pan.baidu.com/s/') or url.startswith('https://pan.baidu.com/s/'):
+        surl = parse_surl_from_url(url)
         req = net.urlopen(url, headers={
             'Cookie': cookie.header_output(),
         })
         if req:
-            return parse_share_uk(req.data.decode())
+            uk, shareid = parse_share_uk(req.data.decode())
+            return False, surl, uk, shareid
+
     # 处理正常链接
+    surl = parse_surl_from_url(url)
     uk, shareid = parse_uk_from_url(url)
-    return False, uk, shareid
+    return False, surl, uk, shareid
 
 def get_share_dirname(url):
     '''从url中提取出当前的目录'''
@@ -365,15 +389,18 @@ def get_share_dirname(url):
     else:
         return None
 
-def get_share_url_with_dirname(uk, shareid, dirname):
+def get_share_url_with_dirname(uk, shareid, surl, dirname):
     '''得到共享目录的链接'''
-    return ''.join([
-           const.PAN_URL, 'wap/link',
-           '?shareid=', shareid,
-           '&uk=', uk,
-           '#list/path=', encoder.encode_uri_component(dirname),
-           '&third=0',
+    url = ''.join([
+        const.PAN_URL, 'wap/link',
+        '?dir=', encoder.encode_uri_component(dirname),
+        '&third=0',
         ])
+    if surl:
+        url = '{0}&surl={1}'.format(url, surl)
+    else:
+        url = '{0}&uk={1}&shareid={2}'.format(url, uk, shareid)
+    return url
 
 def share_transfer(cookie, tokens, shareid, uk, filelist, dest, upload_mode):
     '''
