@@ -487,7 +487,7 @@ def restore_trash(cookie, tokens, fidlist):
     '''
     url = ''.join([
         const.PAN_API_URL,
-        'recycle/restore?channel=chunlei&clienttype=0&web=1&appid=250528',
+        'recycle/restore?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&t=', util.timestamp(),
         '&bdstoken=', tokens['bdstoken'],
     ])
@@ -511,7 +511,7 @@ def delete_trash(cookie, tokens, fidlist):
     '''
     url = ''.join([
         const.PAN_API_URL,
-        'recycle/delete?channel=chunlei&clienttype=0&web=1&appid=250528',
+        'recycle/delete?channel=chunlei&clienttype=0&web=1&app_id=250528&async=1',
         '&bdstoken=', tokens['bdstoken'],
     ])
     data = 'fidlist=' + encoder.encode_uri_component(json.dumps(fidlist))
@@ -529,7 +529,7 @@ def clear_trash(cookie, tokens):
     '''清空回收站, 将里面的所有文件都删除.'''
     url = ''.join([
         const.PAN_API_URL,
-        'recycle/clear?channel=chunlei&clienttype=0&web=1&appid=250528',
+        'recycle/clear?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&t=', util.timestamp(),
         '&bdstoken=', tokens['bdstoken'],
     ])
@@ -613,7 +613,7 @@ def delete_files(cookie, tokens, filelist):
     '''
     url = ''.join([
         const.PAN_API_URL,
-        'filemanager?channel=chunlei&clienttype=0&web=1&appid=250528&opera=delete',
+        'filemanager?channel=chunlei&clienttype=0&web=1&app_id=250528&opera=delete&async=2&onnest=fail',
         '&bdstoken=', tokens['bdstoken'],
     ])
     data = 'filelist=' + encoder.encode_uri_component(json.dumps(filelist))
@@ -686,7 +686,7 @@ def copy(cookie, tokens, filelist):
     '''
     url = ''.join([
         const.PAN_API_URL,
-        'filemanager?channel=chunlei&clienttype=0&web=1&appid=250528&opera=copy',
+        'filemanager?channel=chunlei&clienttype=0&web=1&app_id=250528&opera=copy&async=2&onnest=fail',
         '&bdstoken=', tokens['bdstoken'],
     ])
     data = 'filelist=' + encoder.encode_uri_component(json.dumps(filelist))
