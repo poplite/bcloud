@@ -224,11 +224,14 @@ def get_public_key(cookie, tokens):
     return None
 
 def post_login(cookie, tokens, username, password, rsakey, verifycode='',
-               codestring=''):
+               codestring='', dv=''):
     '''登录验证.
     password   - 使用RSA加密后的base64字符串
     rsakey     - 与public_key相匹配的rsakey
     verifycode - 验证码, 默认为空
+    dv         - 根据时间戳和浏览器信息生成的随机字符串，目前还不支持。
+                 如果登录时需要输入验证码，该参数为空可能会导致登录失败，
+                 返回"err_no":6，即验证码错误。
 
     @return (status, info). 其中, status表示返回的状态:
       0 - 正常, 这里, info里面存放的是auth_cookie
@@ -256,7 +259,8 @@ def post_login(cookie, tokens, username, password, rsakey, verifycode='',
         '&mem_pass=on',
         '&rsakey=', rsakey,
         '&crypttype=12',
-        '&ppui_logintime=',get_ppui_logintime(),
+        '&ppui_logintime=', get_ppui_logintime(),
+        '&dv=', dv,
         '&callback=parent.bd__pcbs__28g1kg',
     ])
     headers={
