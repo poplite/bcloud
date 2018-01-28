@@ -102,7 +102,7 @@ def get_UBI(cookie, tokens):
     else:
         return None
 
-def check_login(cookie, tokens, username):
+def check_login(cookie, tokens, username, dv=''):
     '''进行登录验证, 主要是在服务器上验证这个帐户的状态.
 
     如果帐户不存在, 或者帐户异常, 就不需要再进行最后一步的登录操作了.
@@ -118,6 +118,7 @@ def check_login(cookie, tokens, username):
         '&tt=', util.timestamp(),
         '&username=', encoder.encode_uri_component(username),
         '&isphone=false',
+        '&dv=', dv,
     ])
     headers={
         'Cookie': cookie.header_output(),

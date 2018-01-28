@@ -12,6 +12,7 @@ from gi.repository import Gtk
 
 from bcloud import auth
 from bcloud import Config
+from bcloud import DV
 _ = Config._
 from bcloud import gutil
 from bcloud.log import logger
@@ -412,7 +413,7 @@ class SigninDialog(Gtk.Dialog):
                 password_enc = util.RSA_encrypt(pubkey, password)
                 gutil.async_call(auth.post_login, cookie, tokens,
                                  username, password_enc, rsakey, verifycode,
-                                 codeString, callback=on_post_login)
+                                 codeString, dv, callback=on_post_login)
 
         def on_check_login(info, error=None):
             if not info or error:
@@ -452,7 +453,7 @@ class SigninDialog(Gtk.Dialog):
                 cookie.load_list(ubi_cookie)
                 self.signin_button.set_label(_('Check login'))
                 gutil.async_call(auth.check_login, cookie, tokens,
-                                 username, callback=on_check_login)
+                                 username, dv, callback=on_check_login)
 
         def on_get_token(info, error=None):
             if error or not info:
@@ -491,6 +492,7 @@ class SigninDialog(Gtk.Dialog):
                 return
         cookie = RequestCookie()
         tokens = {}
+        dv = DV.get_new_dv()
         verifycode = ''
         codeString = ''
         password_enc = ''
