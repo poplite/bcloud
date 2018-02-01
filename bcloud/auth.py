@@ -114,7 +114,7 @@ def check_login(cookie, tokens, username, dv=''):
         const.PASSPORT_URL,
         '?logincheck',
         '&token=', tokens['token'],
-        '&tpl=netdisk&subpro=netdisk_web&apiver=v3',
+        '&tpl=netdisk&subpro=netdisk_web&apiver=v3&sub_source=leadsetpwd',
         '&tt=', util.timestamp(),
         '&username=', encoder.encode_uri_component(username),
         '&isphone=false',

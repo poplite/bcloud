@@ -18,6 +18,7 @@ from bcloud.log import logger
 
 RETRIES = 3
 TIMEOUT = 50
+DEBUG = 0
 
 default_headers = {
     'User-agent': const.USER_AGENT,
@@ -32,15 +33,32 @@ default_headers = {
 
 def urloption(url, headers={}, retries=RETRIES):
     '''发送OPTION 请求'''
+    if DEBUG:
+        logger.debug('net.urloption: < URL: %s' % url)
+        if headers:
+            for key, value in headers.items():
+                logger.debug('net.urloption: < HEADER: %s' %
+                             '{0}: {1}'.format(key, value))
+
     headers_merged = default_headers.copy()
     for key in headers.keys():
         headers_merged[key] = headers[key]
     schema = urllib.parse.urlparse(url)
     for i in range(retries):
         try:
+            if DEBUG and i > 0:
+                logger.debug('net.urloption: retried, %d' % i)
+
             conn = http.client.HTTPConnection(schema.netloc)
             conn.request('OPTIONS', url, headers=headers_merged)
             resp = conn.getresponse()
+
+            if DEBUG:
+                logger.debug('net.urloption: > STATUS: %d %s ' %
+                             (resp.getcode(), http.client.responses[resp.getcode()]))
+                for key, value in resp.getheaders():
+                    logger.debug('net.urloption: > HEADER: %s' %
+                                 '{0}: {1}'.format(key, value))
             return resp
         except OSError:
             logger.error(traceback.format_exc())
@@ -61,8 +79,14 @@ class ForbiddenHandler(urllib.request.HTTPErrorProcessor):
 
 
 def urlopen_simple(url, retries=RETRIES, timeout=TIMEOUT):
+    if DEBUG:
+        logger.debug('net.urlopen_simple: %s' % url)
+
     for i in range(retries):
         try:
+            if DEBUG and i > 0:
+                logger.debug('net.urlopen_simple: retried, %d' % i)
+
             opener = urllib.request.build_opener(ForbiddenHandler)
             opener.addheaders = [(k, v) for k,v in default_headers.items()]
             return opener.open(url, timeout=timeout)
@@ -85,14 +109,25 @@ def urlopen(url, headers={}, data=None, retries=RETRIES, timeout=TIMEOUT):
     解压.
     req.data 里面放着的是最终的http数据内容, 通常都是UTF-8编码的文本.
     '''
+    if DEBUG:
+        logger.debug('net.urlopen: < URL: %s' % url)
+        if headers:
+            for key, value in headers.items():
+                logger.debug('net.urlopen: < HEADER: %s' %
+                             '{0}: {1}'.format(key, value))
+        if data:
+            logger.debug('net.urlopen: < DATA: %s' % data.decode())
+
     headers_merged = default_headers.copy()
     for key in headers.keys():
         headers_merged[key] = headers[key]
     opener = urllib.request.build_opener(ForbiddenHandler)
     opener.addheaders = [(k, v) for k,v in headers_merged.items()]
-
     for i in range(retries):
         try:
+            if DEBUG and i > 0:
+                logger.debug('net.urlopen: retried, %d' % i)
+
             req = opener.open(url, data=data, timeout=timeout)
             encoding = req.headers.get('Content-encoding')
             req.data = req.read()
@@ -100,6 +135,13 @@ def urlopen(url, headers={}, data=None, retries=RETRIES, timeout=TIMEOUT):
                 req.data = gzip.decompress(req.data)
             elif encoding == 'deflate':
                 req.data = zlib.decompress(req.data, -zlib.MAX_WBITS)
+
+            if DEBUG:
+                logger.debug('net.urlopen: > STATUS: %d %s' %
+                             (req.getcode(), http.client.responses[req.getcode()]))
+                for key, value in req.getheaders():
+                    logger.debug('net.urlopen: > HEADER: %s' %
+                                 '{0}: {1}'.format(key, value))
             return req
         except OSError:
             logger.error(traceback.format_exc())
@@ -115,13 +157,24 @@ def urlopen_without_redirect(url, headers={}, data=None, retries=RETRIES):
     使用这个函数可以返回URL重定向(Error 301/302)后的地址, 也可以重到URL中请
     求的文件的大小, 或者Header中的其它认证信息.
     '''
+    if DEBUG:
+        logger.debug('net.urlopen_without_redirect: < URL: %s' % url)
+        if headers:
+            for key, value in headers.items():
+                logger.debug('net.urlopen_without_redirect: < HEADER: %s' %
+                             '{0}: {1}'.format(key, value))
+        if data:
+            logger.debug('net.urlopen_without_redirect: < DATA: %s' % data.decode())
+
     headers_merged = default_headers.copy()
     for key in headers.keys():
         headers_merged[key] = headers[key]
-
     parse_result = urllib.parse.urlparse(url)
     for i in range(retries):
         try:
+            if DEBUG and i > 0:
+                logger.debug('net.urlopen_without_redirect: retried, %d' % i)
+
             if parse_result.scheme == 'https':
                 conn = http.client.HTTPSConnection(parse_result.netloc)
             else:
@@ -130,7 +183,16 @@ def urlopen_without_redirect(url, headers={}, data=None, retries=RETRIES):
                 conn.request('POST', url, body=data, headers=headers_merged)
             else:
                 conn.request('GET', url, body=data, headers=headers_merged)
-            return conn.getresponse()
+            resp = conn.getresponse()
+
+            if DEBUG:
+                logger.debug('net.urlopen_without_redirect: > STATUS: %d %s' %
+                             (resp.getcode(), http.client.responses[resp.getcode()]))
+                for key, value in resp.getheaders():
+                    logger.debug('net.urlopen_without_redirect: > HEADER: %s' %
+                                 '{0}: {1}'.format(key, value))
+
+            return resp
         except OSError:
             logger.error(traceback.format_exc())
         except:
@@ -148,8 +210,20 @@ def post_multipart(url, headers, fields, files, retries=RETRIES):
     headers_merged['Content-Type'] = content_type
     headers_merged['Content-length'] = str(len(body))
 
+    if DEBUG:
+        logger.debug('net.post_multipart: < URL: %s' % url)
+        if headers:
+            for key, value in headers.items():
+                logger.debug('net.post_multipart: < HEADER: %s' %
+                             '{0}: {1}'.format(key, value))
+        logger.debug('net.post_multipart: < Filename: %s' % files[0][1])
+        logger.debug('net.post_multipart: < Filesize: %d' % len(files[0][2]))
+
     for i in range(retries):
         try:
+            if DEBUG and i > 0:
+                logger.debug('net.post_multipart: retried, %d' % i)
+
             h = http.client.HTTPConnection(schema.netloc)
             h.request('POST', url, body=body, headers=headers_merged)
             req = h.getresponse()
@@ -159,6 +233,14 @@ def post_multipart(url, headers, fields, files, retries=RETRIES):
                 req.data = gzip.decompress(req.data)
             elif encoding == 'deflate':
                 req.data = zlib.decompress(req.data, -zlib.MAX_WBITS)
+
+            if DEBUG:
+                logger.debug('net.post_multipart: > STATUS: %d %s' %
+                             (req.getcode(), http.client.responses[req.getcode()]))
+                for key, value in req.getheaders():
+                    logger.debug('net.post_multipart: > HEADER: %s' %
+                                 '{0}: {1}'.format(key, value))
+
             return req
         except OSError:
             logger.error(traceback.format_exc())

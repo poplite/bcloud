@@ -20,6 +20,7 @@ def _init_logger(log_level, maxBytes=5*1024*1024, backupCount=5):
     file_handler = RotatingFileHandler(log_file, maxBytes=maxBytes,
                                        backupCount=backupCount)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    #formatter = logging.Formatter('%(thread)d %(asctime)s %(levelname)s %(message)s')
     file_handler.setFormatter(formatter)
     looger.addHandler(file_handler)
     looger.setLevel(log_level)
