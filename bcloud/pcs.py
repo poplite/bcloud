@@ -187,13 +187,14 @@ def list_share_single_file(cookie, tokens, uk, shareid, surl):
     else:
         return None
 
-def enable_share(cookie, tokens, fid_list):
+def enable_share(cookie, tokens, fid_list, period=0):
     '''建立新的分享.
 
     fid_list - 是一个list, 里面的每一条都是一个文件的fs_id
     一次可以分享同一个目录下的多个文件/目录, 它们会会打包为一个分享链接,
     这个分享链接还有一个对应的shareid. 我们可以用uk与shareid来在百度网盘里
     面定位到这个分享内容.
+    period  - 分享有效期，0表示永远有效，1表示一天，7表示七天.
     @return - 会返回分享链接和shareid.
     '''
     url = ''.join([
@@ -201,8 +202,11 @@ def enable_share(cookie, tokens, fid_list):
         'share/set?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&bdstoken=', tokens['bdstoken'],
     ])
-    data = encoder.encode_uri(
-            'fid_list={0}&schannel=0&channel_list=[]'.format(fid_list))
+    data = encoder.encode_uri(''.join([
+            'schannel=0&channel_list=[]',
+            '&fid_list=', json.dumps(fid_list),
+            '&period=', str(period),
+            ]))
     req = net.urlopen(url, headers={
         'Cookie': cookie.header_output(),
         'Content-type': const.CONTENT_FORM_UTF8,
@@ -234,7 +238,7 @@ def disable_share(cookie, tokens, shareid_list):
     else:
         return None
 
-def enable_private_share(cookie, tokens, fid_list):
+def enable_private_share(cookie, tokens, fid_list, period=0):
     '''建立新的私密分享.
 
     密码是在本地生成的, 然后上传到服务器.
@@ -242,14 +246,15 @@ def enable_private_share(cookie, tokens, fid_list):
     print('enable private share:', fid_list, cookie, tokens)
     url = ''.join([
         const.PAN_URL,
-        'share/set?channel=chunlei&clienttype=0&web=1&appid=250528',
+        'share/set?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&bdstoken=', tokens['bdstoken'],
     ])
     print('url:', url)
     passwd = 'dmlg'
     data = encoder.encode_uri(''.join([
-        'fid_list=[', str(fid_list), ']',
-        '&schannel=4&channel_list=[]',
+        'schannel=4&channel_list=[]',
+        '&fid_list=', json.dumps(fid_list),
+        '&period=', str(period),
         '&pwd=', passwd,
         ]))
     print('data:', data)
