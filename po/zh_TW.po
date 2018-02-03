@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-28 15:14+0800\n"
+"POT-Creation-Date: 2018-02-03 13:33+0800\n"
 "PO-Revision-Date: 2014-10-21 17:15+0800\n"
 "Last-Translator: CzBiX <gliuwr@gmail.com>\n"
 "Language-Team: Chinese (traditional)\n"
@@ -59,14 +59,14 @@ msgid "Select All"
 msgstr "全選"
 
 #: ../bcloud/BTBrowserDialog.py:64 ../bcloud/CloudPage.py:150
-#: ../bcloud/DownloadPage.py:246 ../bcloud/IconWindow.py:712
+#: ../bcloud/DownloadPage.py:246 ../bcloud/IconWindow.py:721
 #: ../bcloud/SharePage.py:163 ../bcloud/TrashPage.py:141
 #: ../bcloud/UploadPage.py:205
 msgid "Name"
 msgstr "檔案名稱"
 
 #: ../bcloud/BTBrowserDialog.py:68 ../bcloud/CloudPage.py:157
-#: ../bcloud/DownloadPage.py:260 ../bcloud/IconWindow.py:728
+#: ../bcloud/DownloadPage.py:260 ../bcloud/IconWindow.py:737
 #: ../bcloud/PropertiesDialog.py:58 ../bcloud/SharePage.py:175
 #: ../bcloud/TrashPage.py:156 ../bcloud/UploadPage.py:219
 msgid "Size"
@@ -84,39 +84,39 @@ msgstr "發生了未知錯誤: %s"
 msgid "Reload (F5)"
 msgstr "刷新 (F5)"
 
-#: ../bcloud/CategoryPage.py:140 ../bcloud/CategoryPage.py:142
-#: ../bcloud/CategoryPage.py:160 ../bcloud/CategoryPage.py:162
+#: ../bcloud/CategoryPage.py:140 ../bcloud/CategoryPage.py:144
+#: ../bcloud/CategoryPage.py:162 ../bcloud/CategoryPage.py:164
 #: ../bcloud/HomePage.py:360 ../bcloud/HomePage.py:362
 #: ../bcloud/HomePage.py:374 ../bcloud/HomePage.py:376
 #: ../bcloud/TrashPage.py:203 ../bcloud/TrashPage.py:205
 msgid "Network error"
 msgstr "網路錯誤"
 
-#: ../bcloud/CategoryPage.py:207 ../bcloud/CategoryPage.py:209
+#: ../bcloud/CategoryPage.py:209 ../bcloud/CategoryPage.py:211
 msgid "Videos"
 msgstr "影片"
 
-#: ../bcloud/CategoryPage.py:216 ../bcloud/CategoryPage.py:218
+#: ../bcloud/CategoryPage.py:218 ../bcloud/CategoryPage.py:220
 msgid "Music"
 msgstr "音樂"
 
-#: ../bcloud/CategoryPage.py:225 ../bcloud/CategoryPage.py:227
+#: ../bcloud/CategoryPage.py:227 ../bcloud/CategoryPage.py:229
 msgid "Pictures"
 msgstr "圖片"
 
-#: ../bcloud/CategoryPage.py:234 ../bcloud/CategoryPage.py:236
+#: ../bcloud/CategoryPage.py:236 ../bcloud/CategoryPage.py:238
 msgid "Documents"
 msgstr "文件"
 
-#: ../bcloud/CategoryPage.py:243 ../bcloud/CategoryPage.py:245
+#: ../bcloud/CategoryPage.py:245 ../bcloud/CategoryPage.py:247
 msgid "Others"
 msgstr "其他"
 
-#: ../bcloud/CategoryPage.py:252
+#: ../bcloud/CategoryPage.py:254
 msgid "BT"
 msgstr "BT"
 
-#: ../bcloud/CategoryPage.py:254
+#: ../bcloud/CategoryPage.py:256
 msgid "BT seeds"
 msgstr "BT種子"
 
@@ -369,7 +369,7 @@ msgstr "顯示網盤中的所有檔案"
 msgid "Search documents and folders by name"
 msgstr "搜尋檔案名稱"
 
-#: ../bcloud/IconWindow.py:176 ../bcloud/IconWindow.py:777
+#: ../bcloud/IconWindow.py:176 ../bcloud/IconWindow.py:786
 msgid "Error: Move folder to itself!"
 msgstr "錯誤: 無法將目錄移動到自身"
 
@@ -450,7 +450,11 @@ msgstr "保存到.."
 msgid "Failed to share selected files"
 msgstr "無法分享選中的檔案"
 
-#: ../bcloud/IconWindow.py:735 ../bcloud/SharePage.py:181
+#: ../bcloud/IconWindow.py:655
+msgid "Failed to delete files!"
+msgstr "刪除檔案失敗!"
+
+#: ../bcloud/IconWindow.py:744 ../bcloud/SharePage.py:181
 msgid "Modified"
 msgstr "修改時間"
 
@@ -758,7 +762,7 @@ msgstr "登錄失敗, 請重試"
 msgid "Get auth cookie..."
 msgstr "獲取授权cookie..."
 
-#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:438
+#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:442
 msgid "Please input verification code!"
 msgstr "請輸入驗證碼!"
 
@@ -770,47 +774,51 @@ msgstr "密碼錯誤, 請重試"
 msgid "Verfication code error, please try again"
 msgstr "驗證碼錯誤, 請重試"
 
-#: ../bcloud/SigninDialog.py:396
+#: ../bcloud/SigninDialog.py:394
+msgid "Real name verification required!"
+msgstr "需要實名驗證!"
+
+#: ../bcloud/SigninDialog.py:400
 msgid "Does not support SMS/Email verification!"
 msgstr "不支持手機簡訊/郵件驗證!"
 
-#: ../bcloud/SigninDialog.py:400
+#: ../bcloud/SigninDialog.py:404
 msgid "Unknown error, please try again"
 msgstr "未知錯誤, 請重試"
 
-#: ../bcloud/SigninDialog.py:407
+#: ../bcloud/SigninDialog.py:411
 msgid "Failed to request public key, please try again"
 msgstr "獲取公鑰失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:422
+#: ../bcloud/SigninDialog.py:426
 msgid "Failed to check login, please try again"
 msgstr "檢測登錄歷史失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:451
+#: ../bcloud/SigninDialog.py:455
 msgid "Failed to get UBI, please try again."
 msgstr "獲取UBI失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:454
+#: ../bcloud/SigninDialog.py:458
 msgid "Check login"
 msgstr "檢測登錄歷史"
 
-#: ../bcloud/SigninDialog.py:462
+#: ../bcloud/SigninDialog.py:466
 msgid "Failed to get token, please try again."
 msgstr "獲取token失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:469
+#: ../bcloud/SigninDialog.py:473
 msgid "Get UBI..."
 msgstr "獲取UBI..."
 
-#: ../bcloud/SigninDialog.py:478
+#: ../bcloud/SigninDialog.py:482
 msgid "Failed to get BAIDUID cookie, please try again."
 msgstr "獲取BAIDUID cookie失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:481
+#: ../bcloud/SigninDialog.py:485
 msgid "Get TOKEN..."
 msgstr "獲取 TOKEN..."
 
-#: ../bcloud/SigninDialog.py:500
+#: ../bcloud/SigninDialog.py:504
 msgid "Get BAIDUID..."
 msgstr "獲取BAIDUID..."
 
@@ -853,6 +861,14 @@ msgstr "時間"
 #: ../bcloud/TrashPage.py:166
 msgid "Remaining"
 msgstr "剩餘時間"
+
+#: ../bcloud/TrashPage.py:252 ../bcloud/TrashPage.py:261
+msgid "Failed to delete trash!"
+msgstr "刪除回收桶檔案失敗!"
+
+#: ../bcloud/TrashPage.py:259
+msgid "Security verification required."
+msgstr "需要安全驗證"
 
 #: ../bcloud/UploadPage.py:34
 msgid "UPLOADING"

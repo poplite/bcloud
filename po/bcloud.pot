@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-28 15:14+0800\n"
+"POT-Creation-Date: 2018-02-03 13:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,14 +59,14 @@ msgid "Select All"
 msgstr ""
 
 #: ../bcloud/BTBrowserDialog.py:64 ../bcloud/CloudPage.py:150
-#: ../bcloud/DownloadPage.py:246 ../bcloud/IconWindow.py:712
+#: ../bcloud/DownloadPage.py:246 ../bcloud/IconWindow.py:721
 #: ../bcloud/SharePage.py:163 ../bcloud/TrashPage.py:141
 #: ../bcloud/UploadPage.py:205
 msgid "Name"
 msgstr ""
 
 #: ../bcloud/BTBrowserDialog.py:68 ../bcloud/CloudPage.py:157
-#: ../bcloud/DownloadPage.py:260 ../bcloud/IconWindow.py:728
+#: ../bcloud/DownloadPage.py:260 ../bcloud/IconWindow.py:737
 #: ../bcloud/PropertiesDialog.py:58 ../bcloud/SharePage.py:175
 #: ../bcloud/TrashPage.py:156 ../bcloud/UploadPage.py:219
 msgid "Size"
@@ -84,39 +84,39 @@ msgstr ""
 msgid "Reload (F5)"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:140 ../bcloud/CategoryPage.py:142
-#: ../bcloud/CategoryPage.py:160 ../bcloud/CategoryPage.py:162
+#: ../bcloud/CategoryPage.py:140 ../bcloud/CategoryPage.py:144
+#: ../bcloud/CategoryPage.py:162 ../bcloud/CategoryPage.py:164
 #: ../bcloud/HomePage.py:360 ../bcloud/HomePage.py:362
 #: ../bcloud/HomePage.py:374 ../bcloud/HomePage.py:376
 #: ../bcloud/TrashPage.py:203 ../bcloud/TrashPage.py:205
 msgid "Network error"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:207 ../bcloud/CategoryPage.py:209
+#: ../bcloud/CategoryPage.py:209 ../bcloud/CategoryPage.py:211
 msgid "Videos"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:216 ../bcloud/CategoryPage.py:218
+#: ../bcloud/CategoryPage.py:218 ../bcloud/CategoryPage.py:220
 msgid "Music"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:225 ../bcloud/CategoryPage.py:227
+#: ../bcloud/CategoryPage.py:227 ../bcloud/CategoryPage.py:229
 msgid "Pictures"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:234 ../bcloud/CategoryPage.py:236
+#: ../bcloud/CategoryPage.py:236 ../bcloud/CategoryPage.py:238
 msgid "Documents"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:243 ../bcloud/CategoryPage.py:245
+#: ../bcloud/CategoryPage.py:245 ../bcloud/CategoryPage.py:247
 msgid "Others"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:252
+#: ../bcloud/CategoryPage.py:254
 msgid "BT"
 msgstr ""
 
-#: ../bcloud/CategoryPage.py:254
+#: ../bcloud/CategoryPage.py:256
 msgid "BT seeds"
 msgstr ""
 
@@ -367,7 +367,7 @@ msgstr ""
 msgid "Search documents and folders by name"
 msgstr ""
 
-#: ../bcloud/IconWindow.py:176 ../bcloud/IconWindow.py:777
+#: ../bcloud/IconWindow.py:176 ../bcloud/IconWindow.py:786
 msgid "Error: Move folder to itself!"
 msgstr ""
 
@@ -448,7 +448,11 @@ msgstr ""
 msgid "Failed to share selected files"
 msgstr ""
 
-#: ../bcloud/IconWindow.py:735 ../bcloud/SharePage.py:181
+#: ../bcloud/IconWindow.py:655
+msgid "Failed to delete files!"
+msgstr ""
+
+#: ../bcloud/IconWindow.py:744 ../bcloud/SharePage.py:181
 msgid "Modified"
 msgstr ""
 
@@ -754,7 +758,7 @@ msgstr ""
 msgid "Get auth cookie..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:438
+#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:442
 msgid "Please input verification code!"
 msgstr ""
 
@@ -766,47 +770,51 @@ msgstr ""
 msgid "Verfication code error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:396
-msgid "Does not support SMS/Email verification!"
+#: ../bcloud/SigninDialog.py:394
+msgid "Real name verification required!"
 msgstr ""
 
 #: ../bcloud/SigninDialog.py:400
+msgid "Does not support SMS/Email verification!"
+msgstr ""
+
+#: ../bcloud/SigninDialog.py:404
 msgid "Unknown error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:407
+#: ../bcloud/SigninDialog.py:411
 msgid "Failed to request public key, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:422
+#: ../bcloud/SigninDialog.py:426
 msgid "Failed to check login, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:451
+#: ../bcloud/SigninDialog.py:455
 msgid "Failed to get UBI, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:454
+#: ../bcloud/SigninDialog.py:458
 msgid "Check login"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:462
+#: ../bcloud/SigninDialog.py:466
 msgid "Failed to get token, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:469
+#: ../bcloud/SigninDialog.py:473
 msgid "Get UBI..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:478
+#: ../bcloud/SigninDialog.py:482
 msgid "Failed to get BAIDUID cookie, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:481
+#: ../bcloud/SigninDialog.py:485
 msgid "Get TOKEN..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:500
+#: ../bcloud/SigninDialog.py:504
 msgid "Get BAIDUID..."
 msgstr ""
 
@@ -848,6 +856,14 @@ msgstr ""
 
 #: ../bcloud/TrashPage.py:166
 msgid "Remaining"
+msgstr ""
+
+#: ../bcloud/TrashPage.py:252 ../bcloud/TrashPage.py:261
+msgid "Failed to delete trash!"
+msgstr ""
+
+#: ../bcloud/TrashPage.py:259
+msgid "Security verification required."
 msgstr ""
 
 #: ../bcloud/UploadPage.py:34
