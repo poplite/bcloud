@@ -136,9 +136,11 @@ class CategoryPage(Gtk.Box):
         def on_load(info, error=None):
             self.loading_spin.stop()
             self.loading_spin.hide()
-            if not info:
+            if not info or 'errno' not in info:
                 self.app.toast(_('Network error'))
-            elif info.get('errno', -1) != 0:
+            elif info['errno'] == 31034: # unknown error, just ignore it.
+                pass
+            elif info['errno'] != 0:
                 self.app.toast(info.get('error_msg', _('Network error')))
             if error or not info or info.get('errno', -1) != 0:
                 logger.error('%s.on_load: %s, %s' % (self.disname, info, error))
