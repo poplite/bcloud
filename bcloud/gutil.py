@@ -163,10 +163,13 @@ def update_liststore_image(liststore, tree_iters, col, pcs_files, dir_name,
         return True
 
     for tree_iter, pcs_file in zip(tree_iters, pcs_files):
-        if 'thumbs' not in pcs_file or pcs_file['thumbs']:
+        if 'thumbs' not in pcs_file or not pcs_file['thumbs']:
             continue
-        for key, url in pcs_file['thumbs'].items():
+        for key in ('url1', 'url2', 'url3'):
+            if key not in pcs_file['thumbs']:
+                continue
             fs_id = pcs_file['fs_id']
+            url = pcs_file['thumbs'][key]
             filepath = os.path.join(dir_name, '{0}.jpg'.format(fs_id))
             if os.path.exists(filepath) and os.path.getsize(filepath):
                 GLib.idle_add(update_image, filepath, tree_iter)
