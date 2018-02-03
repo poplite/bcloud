@@ -247,6 +247,21 @@ class TrashPage(Gtk.Box):
         self.app.home_page.reload()
 
     def on_delete_button_clicked(self, button):
+        def on_delete_trash(info, error=None):
+            if error or not info:
+                self.app.toast(_('Failed to delete trash!'))
+                logger.error('TrashPage.on_delete_button_clicked: %s %s' %
+                             (info, error))
+                return
+            if info['errno'] == 0:
+                self.reload()
+            elif info['errno'] == 132:
+                self.app.toast(_('Security verification required.'))
+            else:
+                self.app.toast(_('Failed to delete trash!'))
+                logger.error('TrashPage.on_delete_button_clicked: %s %s' %
+                             (info, error))
+
         selection = self.treeview.get_selection()
         model, tree_paths = selection.get_selected_rows()
         if not tree_paths:
@@ -255,7 +270,7 @@ class TrashPage(Gtk.Box):
         for tree_path in tree_paths:
             fidlist.append(model[tree_path][FSID_COL])
         gutil.async_call(pcs.delete_trash, self.app.cookie, self.app.tokens,
-                         fidlist, callback=self.reload)
+                         fidlist, callback=on_delete_trash)
 
     def on_clear_button_clicked(self, button):
         gutil.async_call(pcs.clear_trash, self.app.cookie, self.app.tokens,

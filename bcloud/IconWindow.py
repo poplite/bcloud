@@ -650,6 +650,15 @@ class IconWindow(Gtk.ScrolledWindow):
         dialog.destroy()
 
     def on_trash_activated(self, menu_item):
+        def on_delete_files(info, error=None):
+            if error or not info or info['error'] != 0:
+                self.app.toast(_('Failed to delete files!'))
+                logger.error('IconWindow.on_trash_activated: %s %s' %
+                             (info, error))
+                return
+            else:
+                self.parent.reload()
+
         tree_paths = self.iconview.get_selected_items()
         if not tree_paths:
             return
@@ -657,7 +666,7 @@ class IconWindow(Gtk.ScrolledWindow):
         for tree_path in tree_paths:
             path_list.append(self.liststore[tree_path][PATH_COL])
         gutil.async_call(pcs.delete_files, self.app.cookie, self.app.tokens,
-                         path_list, callback=self.parent.reload)
+                         path_list, callback=on_delete_files)
         self.app.blink_page(self.app.trash_page)
         self.app.trash_page.reload()
 
