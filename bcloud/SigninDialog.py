@@ -388,6 +388,10 @@ class SigninDialog(Gtk.Dialog):
                 elif errno == 6:
                     self.signin_failed(
                             _('Verfication code error, please try again'))
+                # 需要手机号验证
+                elif errno == 18:
+                    self.signin_failed(
+                            _('Real name verification required!'))
                 # 需要短信验证
                 elif errno == 400031:
                     logger.error('SigninDialog.on_post_login: %s, %s' %

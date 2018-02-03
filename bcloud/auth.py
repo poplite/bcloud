@@ -283,9 +283,9 @@ def post_login(cookie, tokens, username, password, rsakey, verifycode='',
 
         if err_no == 0:
             return (0, auth_cookie)
-        # #!! not bind cellphone
+        # 需要手机号验证
         elif err_no == 18:
-            return (0, auth_cookie)
+            return (err_no, query)
         # 要输入验证码
         elif err_no == 257:
             return (err_no, query)
