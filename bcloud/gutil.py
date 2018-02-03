@@ -163,27 +163,20 @@ def update_liststore_image(liststore, tree_iters, col, pcs_files, dir_name,
         return True
 
     for tree_iter, pcs_file in zip(tree_iters, pcs_files):
-        if 'thumbs' not in pcs_file:
+        if 'thumbs' not in pcs_file or pcs_file['thumbs']:
             continue
-        if 'url1' in pcs_file['thumbs']:
-            key = 'url1'
-        elif 'url2' in pcs_file['thumbs']:
-            key = 'url2'
-        elif 'url3' in pcs_file['thumbs']:
-            key = 'url3'
-        else:
-            continue
-        fs_id = pcs_file['fs_id']
-        url = pcs_file['thumbs'][key]
-        filepath = os.path.join(dir_name, '{0}.jpg'.format(fs_id))
-        if os.path.exists(filepath) and os.path.getsize(filepath):
-            GLib.idle_add(update_image, filepath, tree_iter)
-        elif not url or len(url) < 10:
-            logger.warn('update_liststore_image(), failed to get url')
-        else:
-            status = dump_image(url, filepath)
-            if status:
+        for key, url in pcs_file['thumbs'].items():
+            fs_id = pcs_file['fs_id']
+            filepath = os.path.join(dir_name, '{0}.jpg'.format(fs_id))
+            if os.path.exists(filepath) and os.path.getsize(filepath):
                 GLib.idle_add(update_image, filepath, tree_iter)
+            elif not url or len(url) < 10:
+                logger.warn('update_liststore_image(), failed to get url')
+            else:
+                status = dump_image(url, filepath)
+                if status:
+                    GLib.idle_add(update_image, filepath, tree_iter)
+                    break
 
 def update_share_image(liststore, tree_iters, col, large_col, pcs_files,
                        dir_name, icon_size, large_icon_size):
