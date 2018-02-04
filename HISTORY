@@ -1,3 +1,20 @@
+v3.9.3 - 2018.02.04 <UNOFFICIAL>
+* Fixed: failed to get bdstoken
+* Fixed: support chinese verifycode
+* Fixed: new auth cookies required for logging in
+* Fixed: failed to download files due to user-agent check
+* Fixed: support new types of share link
+* Fixed: error occured when sharing files
+* Fixed: unable to delete files
+* Fixed: add real name verification error
+* Feature: all API requests are over HTTPS now
+* Feature: logging in using cached cookies and tokens
+* Feature: check verifycode before being submitted
+* initially support DV param to avoid "verifycode incorrect" error
+* various PCS API updated
+* various minor bugs fixed
+* i18n updated
+
 v3.8.2 - 2015.12.25
 * Fixed: failed to get bdstoken (pull#214, by @zhaihj).
 
