@@ -30,14 +30,17 @@ scripts = ['bcloud-gui', ]
 if __name__ == '__main__':
     assert sys.version_info.major > 2, 'Only works with python3'
     setup(
-        name = 'bcloud',
-        description = 'Baidu Pan client for Linux Desktop users',
+        name = 'bcloud-unofficial',
+        description = 'Baidu Pan client for Linux Desktop users (Unofficial fork)',
         version = bcloud.__version__,
         license = 'GPLv3',
-        url = 'https://github.com/LiuLang/bcloud',
+        url = 'https://github.com/poplite/bcloud',
+        #url = 'https://github.com/LiuLang/bcloud',
 
-        author = 'LiuLang',
-        author_email = 'gsushzhsosgsu@gmail.com',
+        author = 'poplite',
+        author_email = 'poplite.xyz@gmail.com',
+        #author = 'LiuLang',
+        #author_email = 'gsushzhsosgsu@gmail.com',
 
         packages = ['bcloud', ],
         scripts = scripts,

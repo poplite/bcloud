@@ -8,6 +8,7 @@ bcloud/CloudPage.py
 bcloud/Config.py
 bcloud/DownloadPage.py
 bcloud/Downloader.py
+bcloud/DV.py
 bcloud/ErrorMsg.py
 bcloud/FileWatcher.py
 bcloud/FolderBrowserDialog.py

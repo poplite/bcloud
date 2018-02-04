@@ -35,7 +35,8 @@ _ = gettext.gettext
 DBUS_APP_NAME = 'org.liulang.bcloud'
 APPNAME = 'BCloud'
 VERSION = bcloud.__version__
-HOMEPAGE = 'https://github.com/LiuLang/bcloud'
+HOMEPAGE = 'https://github.com/poplite/bcloud'
+#HOMEPAGE = 'https://github.com/LiuLang/bcloud'
 # https://github.com/LiuLang/bcloud/pulls
 AUTHORS = [
     'Alexzhang <alex8224@gmail.com>',
@@ -47,11 +48,13 @@ AUTHORS = [
     'latyas <latyas@gmail.com>',
     'Libertas <horizonvei@gmail.com>',
     'LiuLang <gsushzhsosgsu@gmail.com>',
+    'poplite <poplite.xyz@gmail.com>',
     'Zhenbo Li <litimetal@gmail.com>',
     'slawdan <schludern@gmail.com>',
     'Zihao Wang <wzhdev@gmail.com>',
 ]
-COPYRIGHT = 'Copyright (c) 2014-2015 LiuLang'
+COPYRIGHT = 'Copyright (c) 2014-2015 LiuLang\n' \
+            'Copyright (c) poplite'
 DESCRIPTION = _('Baidu Pan client for GNU/Linux desktop users.')
 
 CACHE_DIR = os.path.join(HOME_DIR, '.cache', NAME)
