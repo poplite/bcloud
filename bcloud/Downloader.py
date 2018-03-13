@@ -99,7 +99,12 @@ class DownloadBatch(threading.Thread):
                     logger.debug('DownloadBatch.download: socket reconnected')
                 try:
                     block = req.read(CHUNK_SIZE)
-                    if block:
+                    if not block:
+                        logger.error('DownloadBatch, block is empty: %s, %s, %s, %s' %
+                                     (offset, self.start_size, self.end_size,
+                                      len(block)))
+                        req = None
+                    else:
                         break
                 except (OSError, AttributeError):
                     #self.queue.put((self.id_, BATCH_ERROR), block=False)
@@ -113,9 +118,6 @@ class DownloadBatch(threading.Thread):
 
                    
             else:
-                logger.error('DownloadBatch, block is empty: %s, %s, %s, %s' %
-                             (offset, self.start_size, self.end_size,
-                              len(block)))
                 self.queue.put((self.id_, BATCH_ERROR), block=False)
                 return
 
