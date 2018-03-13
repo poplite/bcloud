@@ -651,7 +651,7 @@ class IconWindow(Gtk.ScrolledWindow):
 
     def on_trash_activated(self, menu_item):
         def on_delete_files(info, error=None):
-            if error or not info or info['error'] != 0:
+            if error or not info or info['errno'] != 0:
                 self.app.toast(_('Failed to delete files!'))
                 logger.error('IconWindow.on_trash_activated: %s %s' %
                              (info, error))

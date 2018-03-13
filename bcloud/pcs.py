@@ -523,6 +523,7 @@ def delete_trash(cookie, tokens, fidlist):
     req = net.urlopen(url, headers={
         'Cookie': cookie.header_output(),
         'Content-type': const.CONTENT_FORM_UTF8,
+        'Referer': const.SHARE_REFERER,
         }, data=data.encode())
     if req:
         content = req.data
