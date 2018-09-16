@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-03 13:33+0800\n"
+"POT-Creation-Date: 2018-09-16 21:09+0800\n"
 "PO-Revision-Date: 2014-10-21 17:15+0800\n"
 "Last-Translator: CzBiX <gliuwr@gmail.com>\n"
 "Language-Team: Chinese (traditional)\n"
@@ -213,7 +213,7 @@ msgstr "將下載連結貼到這裡, 每行一個"
 msgid "Support http/https/ftp/thunder/qqdl/flashget/eMule/Magnet format"
 msgstr "支援 HTTP/HTTPS/FTP/迅雷/旋風/快車/電驢/磁鏈 等格式"
 
-#: ../bcloud/Config.py:55
+#: ../bcloud/Config.py:58
 msgid "Baidu Pan client for GNU/Linux desktop users."
 msgstr "百度網盤的 Linux 客戶端"
 
@@ -762,7 +762,7 @@ msgstr "登錄失敗, 請重試"
 msgid "Get auth cookie..."
 msgstr "獲取授权cookie..."
 
-#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:442
+#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:446
 msgid "Please input verification code!"
 msgstr "請輸入驗證碼!"
 
@@ -778,47 +778,51 @@ msgstr "驗證碼錯誤, 請重試"
 msgid "Real name verification required!"
 msgstr "需要實名驗證!"
 
-#: ../bcloud/SigninDialog.py:400
+#: ../bcloud/SigninDialog.py:398
+msgid "Security verification required!"
+msgstr "需要安全驗證!"
+
+#: ../bcloud/SigninDialog.py:404
 msgid "Does not support SMS/Email verification!"
 msgstr "不支持手機簡訊/郵件驗證!"
 
-#: ../bcloud/SigninDialog.py:404
+#: ../bcloud/SigninDialog.py:408
 msgid "Unknown error, please try again"
 msgstr "未知錯誤, 請重試"
 
-#: ../bcloud/SigninDialog.py:411
+#: ../bcloud/SigninDialog.py:415
 msgid "Failed to request public key, please try again"
 msgstr "獲取公鑰失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:426
+#: ../bcloud/SigninDialog.py:430
 msgid "Failed to check login, please try again"
 msgstr "檢測登錄歷史失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:455
+#: ../bcloud/SigninDialog.py:459
 msgid "Failed to get UBI, please try again."
 msgstr "獲取UBI失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:458
+#: ../bcloud/SigninDialog.py:462
 msgid "Check login"
 msgstr "檢測登錄歷史"
 
-#: ../bcloud/SigninDialog.py:466
+#: ../bcloud/SigninDialog.py:470
 msgid "Failed to get token, please try again."
 msgstr "獲取token失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:473
+#: ../bcloud/SigninDialog.py:477
 msgid "Get UBI..."
 msgstr "獲取UBI..."
 
-#: ../bcloud/SigninDialog.py:482
+#: ../bcloud/SigninDialog.py:486
 msgid "Failed to get BAIDUID cookie, please try again."
 msgstr "獲取BAIDUID cookie失敗, 請重試"
 
-#: ../bcloud/SigninDialog.py:485
+#: ../bcloud/SigninDialog.py:489
 msgid "Get TOKEN..."
 msgstr "獲取 TOKEN..."
 
-#: ../bcloud/SigninDialog.py:504
+#: ../bcloud/SigninDialog.py:508
 msgid "Get BAIDUID..."
 msgstr "獲取BAIDUID..."
 

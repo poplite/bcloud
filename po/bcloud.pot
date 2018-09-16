@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-03 13:33+0800\n"
+"POT-Creation-Date: 2018-09-16 21:09+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Support http/https/ftp/thunder/qqdl/flashget/eMule/Magnet format"
 msgstr ""
 
-#: ../bcloud/Config.py:55
+#: ../bcloud/Config.py:58
 msgid "Baidu Pan client for GNU/Linux desktop users."
 msgstr ""
 
@@ -758,7 +758,7 @@ msgstr ""
 msgid "Get auth cookie..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:442
+#: ../bcloud/SigninDialog.py:374 ../bcloud/SigninDialog.py:446
 msgid "Please input verification code!"
 msgstr ""
 
@@ -774,47 +774,51 @@ msgstr ""
 msgid "Real name verification required!"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:400
-msgid "Does not support SMS/Email verification!"
+#: ../bcloud/SigninDialog.py:398
+msgid "Security verification required!"
 msgstr ""
 
 #: ../bcloud/SigninDialog.py:404
+msgid "Does not support SMS/Email verification!"
+msgstr ""
+
+#: ../bcloud/SigninDialog.py:408
 msgid "Unknown error, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:411
+#: ../bcloud/SigninDialog.py:415
 msgid "Failed to request public key, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:426
+#: ../bcloud/SigninDialog.py:430
 msgid "Failed to check login, please try again"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:455
+#: ../bcloud/SigninDialog.py:459
 msgid "Failed to get UBI, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:458
+#: ../bcloud/SigninDialog.py:462
 msgid "Check login"
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:466
+#: ../bcloud/SigninDialog.py:470
 msgid "Failed to get token, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:473
+#: ../bcloud/SigninDialog.py:477
 msgid "Get UBI..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:482
+#: ../bcloud/SigninDialog.py:486
 msgid "Failed to get BAIDUID cookie, please try again."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:485
+#: ../bcloud/SigninDialog.py:489
 msgid "Get TOKEN..."
 msgstr ""
 
-#: ../bcloud/SigninDialog.py:504
+#: ../bcloud/SigninDialog.py:508
 msgid "Get BAIDUID..."
 msgstr ""
 
