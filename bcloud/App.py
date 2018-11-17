@@ -181,7 +181,7 @@ class App:
         if not self.profile:
             self.show_signin_dialog()
         self.window.show_all()
-        if self.profile['startup-minimized']:
+        if self.profile and self.profile['startup-minimized']:
             self.window.hide()
         if hasattr(self, 'home_page'):
             self.switch_page(self.home_page)

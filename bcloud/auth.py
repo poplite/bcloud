@@ -387,7 +387,7 @@ def generate_sign(sign1, sign3):
     sign = s(sign3, sign1)
     return base64.b64encode(sign).decode()
 
-def get_sign_and_timestamp():
+def get_sign_and_timestamp(cookie):
     '''获得部分API需要的timestamp和sign参数.'''
     req = net.urlopen(const.PAN_URL, headers={'Cookie': cookie.header_output()})
     if req:
@@ -401,4 +401,4 @@ def get_sign_and_timestamp():
             sign = generate_sign(sign1, sign3)
             timestamp = int(timestamp_match[0])
             return sign, timestamp
-    return None
+    return None, None
