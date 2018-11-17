@@ -31,6 +31,10 @@ def timestamp():
     '''返回当前的时间标记, 以毫秒为单位'''
     return str(int(time.time() * 1000))
 
+def timestamp_s():
+    '''返回当前的时间标记, 以秒为单位'''
+    return str(int(time.time()))
+
 def curr_time():
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, '%Y%m%d%H%M%S')

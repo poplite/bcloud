@@ -803,53 +803,89 @@ def get_category(cookie, tokens, category, page=1):
     else:
         return None
 
-def get_download_link(cookie, tokens, path):
-    '''在下载之前, 要先获取最终的下载链接.
+def get_download_link(cookie, path):
+    '''获取文件的下载链接.
+
+    path - 一个文件的绝对路径.
+    '''
+    #if 'sign' not in tokens:
+    #    tokens['sign'], tokens['timestamp'] = auth.get_sign_and_timestamp(cookie)
+    #fidlist = [ int(fid) ]
+    #info = get_dlink_by_fsid(cookie, tokens, fidlist)
+    #if (not info or info.get('errno', -1) != 0 or
+    #        'dlink' not in info or len(info['dlink']) != 1):
+    #    logger.error('pcs.get_download_link(): %s' % info)
+    #    return None
+    #dlink = info['dlink'][0]['dlink']
+    #req = net.urlopen_without_redirect(dlink, headers={
+    #    'Cookie': cookie.cookie.header_output(),
+    #    'Accept': const.ACCEPT_HTML,
+    #})
+    #if not req:
+    #    return dlink
+    #else:
+    #    return req.getheader('Location', dlink)
+
+    info = get_dlink_by_path(cookie, path)
+
+    if (not info or 'urls' not in info or len(info['urls']) < 1):
+        logger.error('pcs.get_download_link(): %s' % info)
+        return None
+    else:
+        return info['urls'][0]['url']
+
+def get_dlink_by_path(cookie, path):
+    '''根据文件路径获得dlink
 
     path - 一个文件的绝对路径.
 
-    @return red_url, red_url 是重定向后的URL, 如果获取失败,
-            就返回原来的dlink;
-    '''
-    metas = get_metas(cookie, tokens, path)
-    if (not metas or metas.get('errno', -1) != 0 or
-            'info' not in metas or len(metas['info']) != 1):
-        logger.error('pcs.get_download_link(): %s' % metas)
-        return None
-    dlink = metas['info'][0]['dlink']
-    url = '{0}&cflg={1}'.format(dlink, cookie.get('cflag').value)
-    req = net.urlopen_without_redirect(url, headers={
-        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'cflag', 'SCRC', 'STOKEN'),
-        'Accept': const.ACCEPT_HTML,
-    })
-    if not req:
-        return url
-    else:
-        return req.getheader('Location', url)
-
-def get_dlink_by_fsid(cookie, tokens, fidlist):
-    '''根据fs_id获得dlink, 需要timestamp和sign参数.
-
-    fidlist - fs_id列表, 可以只有一个fs_id.
+    返回数据的结构：
+    {"client_ip":"xxxxxx","urls":[{"url":"xxxxxx","rank":1},{"url":"xxxxxx","rank":2}],"rank_param":{"max_continuous_failure":30,"bak_rank_slice_num":20},"sl":78,"max_timeout":30,"min_timeout":20,"request_id":xxxxxx}}
     '''
     url = ''.join([
-        const.PAN_API_URL,
-        'download?type=dlink',
-        '&channel=chunlei&web=1&app_id=250528clienttype=0',
-        '&fidlist=', encoder.encode_uri_component(json.dumps(fidlist)),
-        '&sign=', tokens['sign'],
-        '&timestamp=', str(tokens['timestamp']),
-        '&bdstoken=', tokens['bdstoken'],
+        const.PCS_URLS_D,
+        'file?app_id=250528&method=locatedownload',
+        '&dtype=1&err_ver=1.0&ehps=0&clienttype=8&vip=0',
+        '&check_blue=1&es=1&esl=1&ver=4.0',
+        '&channel=00000000000000000000000000000000',
+        '&path=', encoder.encode_uri_component(path),
+        '&version=', const.PC_VERSION,
+        '&devuid=', const.PC_DEVUID,
+        '&time=', util.timestamp_s(),
     ])
     req = net.urlopen(url, headers={
-        'Cookie': cookie.header_output(),
-        'Referer': const.SHARE_REFERER,
-    })
+        'Cookie': cookie.sub_output('BAIDUID', 'BDUSS', 'STOKEN')
+    }, data=b' ') # Method: POST
+
     if req:
         content = req.data
         return json.loads(content.decode())
     else:
         return None
+
+#def get_dlink_by_fsid(cookie, tokens, fidlist):
+#    '''根据fs_id获得dlink, 需要timestamp和sign参数.
+#
+#    fidlist - fs_id列表, 可以只有一个fs_id.
+#    '''
+#    url = ''.join([
+#        const.PAN_API_URL,
+#        'download?type=dlink',
+#        '&channel=chunlei&web=1&app_id=250528clienttype=0',
+#        '&fidlist=', encoder.encode_uri_component(json.dumps(fidlist)),
+#        '&sign=', tokens['sign'],
+#        '&timestamp=', str(tokens['timestamp']),
+#        '&bdstoken=', tokens['bdstoken'],
+#    ])
+#    req = net.urlopen(url, headers={
+#        'Cookie': cookie.header_output(),
+#        'Referer': const.SHARE_REFERER,
+#    })
+#    if req:
+#        content = req.data
+#        return json.loads(content.decode())
+#    else:
+#        return None
 
 def batch_download(cookie, tokens, fidlist):
     '''批量下载多个文件, 需要timestamp和sign参数.

@@ -70,7 +70,8 @@ class DownloadBatch(threading.Thread):
         opener.addheaders = [
             ('Range', content_range),
             ('User-Agent', const.USER_AGENT),
-            ('Referer', const.PAN_REFERER),
+            ('Accept', '*/*'),
+            ('Connection', 'close')
         ]
         for i in range(RETRIES):
             try:
