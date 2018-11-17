@@ -75,14 +75,14 @@ class DownloadBatch(threading.Thread):
         for i in range(RETRIES):
             try:
                 return opener.open(self.url, timeout=self.timeout)
-            except OSError:
-                logger.error(traceback.format_exc())
-                self.queue.put((self.id_, BATCH_ERROR), block=False)
-                return None
+            #except OSError:
+            #    logger.error(traceback.format_exc())
+            #    self.queue.put((self.id_, BATCH_ERROR), block=False)
+            #    return None
             except:
-                self.queue.put((self.id_, BATCH_ERROR), block=False)
-                return None
+                logger.error(traceback.format_exc())
         else:
+            self.queue.put((self.id_, BATCH_ERROR), block=False)
             return None
 
     def download(self):
@@ -179,7 +179,7 @@ class Downloader(threading.Thread, GObject.GObject):
                 name, ext = os.path.splitext(filepath)
                 filepath = '{0}_{1}{2}'.format(name, util.curr_time(), ext)
 
-        url = pcs.get_download_link(self.cookie, self.tokens, row[PATH_COL])
+        url = pcs.get_download_link(self.cookie, row[PATH_COL])
         if not url:
             row[STATE_COL] = State.ERROR
             self.emit('network-error', row[FSID_COL])
