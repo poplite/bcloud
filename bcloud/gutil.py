@@ -63,7 +63,7 @@ DEFAULT_PROFILE = {
     'save-dir': Config.HOME_DIR,
     # 同时进行的下载任务数, 1~5
     'concurr-download': 2,
-    # 下载单个任务的线程数 1~10
+    # 下载单个任务的线程数 1~5
     'download-segments': 3,
     # 隔5分钟后尝试重新下载
     'retries-each': 5,
