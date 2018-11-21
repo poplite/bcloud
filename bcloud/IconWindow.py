@@ -420,13 +420,14 @@ class IconWindow(Gtk.ScrolledWindow):
             '''先保存播放列表到临时目录, 再调用播放器直接打开这个播放列表
 
             如果pls为None的话, 说明没能得到播放列表, 这时就需要使用之前的方
-            法, 先得到视频地址, 再用播放器去打开它.
+            法, 先得到视频地址, 再用播放器去打开它.(此方法暂时失效)
             '''
             if error or not pls or b'error_code' in pls:
-                gutil.async_call(pcs.get_download_link, self.app.cookie,
-                                 self.app.tokens,
-                                 self.liststore[tree_paths[0]][PATH_COL],
-                                 callback=open_video_link)
+                # Unavailable due to user-agent check
+                #gutil.async_call(pcs.get_download_link, self.app.cookie,
+                #                 self.liststore[tree_paths[0]][PATH_COL],
+                #                 callback=open_video_link)
+                return
             else:
                 pls_filepath = os.path.join('/tmp',
                         pcs_file['server_filename'] + '.m3u8')
@@ -449,11 +450,10 @@ class IconWindow(Gtk.ScrolledWindow):
             if self.app.profile['use-streaming']:
                 gutil.async_call(pcs.get_streaming_playlist, self.app.cookie,
                                  pcs_file['path'], callback=save_playlist)
-            else:
-                gutil.async_call(pcs.get_download_link, self.app.cookie,
-                                 self.app.tokens,
-                                 self.liststore[tree_paths[0]][PATH_COL],
-                                 callback=open_video_link)
+            #else:
+            #    gutil.async_call(pcs.get_download_link, self.app.cookie,
+            #                     self.liststore[tree_paths[0]][PATH_COL],
+            #                     callback=open_video_link)
         else:
             self.app.blink_page(self.app.download_page)
             self.app.download_page.add_launch_task(pcs_file, app_info)
@@ -515,7 +515,6 @@ class IconWindow(Gtk.ScrolledWindow):
         if not tree_paths:
             return
         gutil.async_call(pcs.get_download_link, self.app.cookie,
-                         self.app.tokens,
                          self.liststore[tree_paths[0]][PATH_COL],
                          callback=copy_link_to_clipboard)
 
