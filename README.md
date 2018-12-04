@@ -21,6 +21,10 @@ bcloud 是[百度网盘](https://pan.baidu.com)的Linux桌面客户端.
 
 不影响使用，可以忽略。
 
+4.登录时出现“需要安全验证”错误
+
+需要登录网页端，完成百度的安全验证。
+
 类似项目
 =======
 [bypy](https://github.com/houtianze/bypy) 终端里使用的百度网盘客户端, 它
