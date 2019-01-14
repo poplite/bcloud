@@ -89,9 +89,6 @@ class DownloadBatch(threading.Thread):
     def download(self):
         offset = self.start_size
         req = self.get_req(offset, self.end_size)
-        if not req:
-            self.queue.put((self.id_, BATCH_ERROR), block=False)
-            return
 
         while not self.stop_flag:
             for i in range(DOWNLOAD_RETRIES):
@@ -108,16 +105,11 @@ class DownloadBatch(threading.Thread):
                     else:
                         break
                 except (OSError, AttributeError):
-                    #self.queue.put((self.id_, BATCH_ERROR), block=False)
                     logger.error(traceback.format_exc())
                     req = None
                 except  :
-                    req=None
                     logger.error( 'Time out occured.')
-                    #self.queue.put((self.id_, BATCH_ERROR), block=False)
-                    #return
-
-                   
+                    req = None
             else:
                 self.queue.put((self.id_, BATCH_ERROR), block=False)
                 return
@@ -128,6 +120,7 @@ class DownloadBatch(threading.Thread):
                 self.fh.seek(offset)
                 self.fh.write(block)
                 self.queue.put((self.id_, len(block)), block=False)
+
             offset = offset + len(block)
             # 下载完成
             if offset >= self.end_size:
