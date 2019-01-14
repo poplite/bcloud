@@ -184,6 +184,9 @@ class Downloader(threading.Thread, GObject.GObject):
             with open(conf_filepath) as conf_fh:
                 status = json.load(conf_fh)
             threads = len(status)
+            if threads != self.default_threads:
+                logger.warn("threads of task doesn't equal default_threads %d %d" %
+                            (threads, self.default_threads))
             file_exists = True
             fh = open(tmp_filepath, 'rb+')
             fh.seek(0)
