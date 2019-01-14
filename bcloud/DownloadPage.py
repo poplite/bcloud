@@ -39,6 +39,7 @@ StateNames = (
     _('FINISHED'),
     _('CANCELED'),
     _('ERROR'),
+    _('RETRYING'),
 )
 
 
@@ -92,6 +93,7 @@ class DownloadPage(Gtk.Box):
     name = 'DownloadPage'
     tooltip = _('Downloading files')
     first_run = True
+    retry_tasks = []
     workers = {}                    # { `fs_id': (worker,row) }
     app_infos = {}                  # { `fs_id': app }
     commit_count = 0
@@ -359,12 +361,19 @@ class DownloadPage(Gtk.Box):
 
     def update_task_db(self, row):
         '''更新数据库中的任务信息'''
+        # 在数据库中，用 WAITING 代替 RETRYING
+        STATE = row[STATE_COL] \
+                if row[STATE_COL] != State.RETRYING else State.WARNING
+        STATENAME = row[STATENAME_COL] \
+                if row[STATENAME_COL] != StateNames[State.RETRYING] \
+                else StateNames[State.WAITING]
+
         sql = '''UPDATE tasks SET 
         currsize=?, state=?, statename=?, humansize=?, percent=?
         WHERE fsid=?
         '''
         self.cursor.execute(sql, [
-            row[CURRSIZE_COL], row[STATE_COL], row[STATENAME_COL],
+            row[CURRSIZE_COL], STATE, STATENAME,
             row[HUMANSIZE_COL], row[PERCENT_COL], row[FSID_COL]
         ])
         self.check_commit()
@@ -482,7 +491,7 @@ class DownloadPage(Gtk.Box):
         # Shutdown system after all tasks have finished
         for row in self.liststore:
             if (row[STATE_COL] not in
-                    (State.PAUSED, State.FINISHED, State.CANCELED)):
+                    (State.PAUSED, State.FINISHED, State.CANCELED, State.RETRYING)):
                 return
         self.shutdown.shutdown()
 
@@ -546,16 +555,22 @@ class DownloadPage(Gtk.Box):
                 row = self.get_row_by_fsid(fs_id)
                 if not row:
                     return
-            row[STATE_COL] = State.ERROR
-            row[STATENAME_COL] = StateNames[State.ERROR]
             self.update_task_db(row)
             self.remove_worker(row[FSID_COL], stop=False)
             if self.app.profile['retries-each']:
-                GLib.timeout_add(self.app.profile['retries-each'] * 60000,
+                for info in self.retry_tasks:
+                    if info[0] == row[FSID_COL]:
+                        return
+                event_id = GLib.timeout_add(self.app.profile['retries-each'] * 60000,
                                  self.restart_task, row)
+                self.retry_tasks.append((row[FSID_COL], event_id))
+                row[STATE_COL] = State.RETRYING
+                row[STATENAME_COL] = StateNames[State.RETRYING]
             else:
                 self.app.toast(_('Error occurs will downloading {0}').format(
                                row[NAME_COL]))
+                row[STATE_COL] = State.ERROR
+                row[STATENAME_COL] = StateNames[State.ERROR]
             self.scan_tasks()
 
         def do_worker_disk_error(fs_id, tmp_filepath):
@@ -602,7 +617,8 @@ class DownloadPage(Gtk.Box):
         当指定的下载任务出现错误时(通常是网络连接超时), 如果用户允许, 就会在
         指定的时间间隔之后, 重启这个任务.
         '''
-        self.start_task(row)
+        if row[STATE_COL] == State.RETRYING:
+            self.start_task(row)
 
     def start_task(self, row, scan=True):
         '''启动下载任务.
@@ -631,7 +647,9 @@ class DownloadPage(Gtk.Box):
             return
         if row[STATE_COL] == State.DOWNLOADING:
             self.pause_worker(row)
-        if row[STATE_COL] in (State.DOWNLOADING, State.WAITING):
+        if row[STATE_COL] in (State.DOWNLOADING, State.WAITING, State.RETRYING):
+            if row[STATE_COL] == State.RETRYING:
+                self.remove_retry_task(row)
             row[STATE_COL] = State.PAUSED
             row[STATENAME_COL] = StateNames[State.PAUSED]
             self.update_task_db(row)
@@ -655,6 +673,8 @@ class DownloadPage(Gtk.Box):
 
         if row[STATE_COL] == State.DOWNLOADING:
             self.stop_worker(row)
+        elif row[STATE_COL] == State.RETRYING:
+            self.remove_retry_task(row)
         elif row[CURRSIZE_COL] < row[SIZE_COL]:
             filepath, tmp_filepath, conf_filepath = get_tmp_filepath(
                     row[SAVEDIR_COL], row[SAVENAME_COL])
@@ -669,6 +689,15 @@ class DownloadPage(Gtk.Box):
             self.liststore.remove(tree_iter)
         if scan:
             self.scan_tasks()
+
+    def remove_retry_task(self, row):
+        '''移除等待重试的任务'''
+        for task in self.retry_tasks:
+            fs_id, event_id = task
+            if fs_id == row[FSID_COL]:
+                GLib.source_remove(event_id)
+                self.retry_tasks.remove(task)
+                break
 
     # handle download speed
     def download_speed_init(self):

@@ -60,6 +60,7 @@ class State:
     FINISHED = 3
     CANCELED = 4
     ERROR = 5
+    RETRYING = 6
 
 class UploadState:
     UPLOADING = 0
