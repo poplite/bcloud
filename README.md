@@ -3,7 +3,7 @@
 bcloud 是[百度网盘](https://pan.baidu.com)的Linux桌面客户端.
 
 本项目是非官方的 bcloud ，不定期进行维护更新。  
-原项目地址: https://github.com/Liulang/bcloud
+原项目地址: https://github.com/XuShaohua/bcloud
 
 已知问题
 =======
@@ -17,13 +17,7 @@ bcloud 是[百度网盘](https://pan.baidu.com)的Linux桌面客户端.
 
 登录网页端后删除回收站中的任一文件，出现“需要安全验证”窗口，然后用绑定的邮箱或者手机完成验证即可。
 
-3.浏览分类页面时出现“网络错误”提示
-
-不影响使用，可以忽略。
-
-4.登录时出现“需要安全验证”错误
-
-需要登录网页端，完成百度的安全验证。
+如果登录困难，可以参考[这篇wiki](https://github.com/poplite/bcloud/wiki/%E5%85%B3%E4%BA%8E-auth.json-%E7%9A%84%E8%AF%B4%E6%98%8E)，尝试手动导入登录信息。
 
 类似项目
 =======
