@@ -138,12 +138,12 @@ class CategoryPage(Gtk.Box):
             self.loading_spin.hide()
             if not info or 'errno' not in info:
                 self.app.toast(_('Network error'))
-            elif info['errno'] == 31034: # unknown error, just ignore it.
-                pass
-            elif info['errno'] != 0:
+            elif info['errno'] != 0 and info['errno'] != 31034:
                 self.app.toast(info.get('error_msg', _('Network error')))
+
             if error or not info or info.get('errno', -1) != 0:
-                logger.error('%s.on_load: %s, %s' % (self.disname, info, error))
+                if error or not info or info.get('errno', -1) != 31034:
+                    logger.error('%s.on_load: %s, %s' % (self.disname, info, error))
                 return
             self.icon_window.load(info['info'])
 
@@ -160,11 +160,12 @@ class CategoryPage(Gtk.Box):
             self.loading_spin.hide()
             if not info:
                 self.app.toast(_('Network error'))
-            elif info.get('errno', -1) != 0:
+            elif info.get('errno', -1) != 0 and info.get('errno', -1) != 31034:
                 self.app.toast(info.get('error_msg', _('Network error')))
-            if error or not info or info['errno'] != 0:
-                logger.error('%s.on_load_next: %s, %s' %
-                             (self.disname, info, error))
+            if error or not info or info.get('errno', -1) != 0:
+                if error or not info or info.get('errno', -1) != 31034:
+                    logger.error('%s.on_load_next: %s, %s' %
+                                 (self.disname, info, error))
                 return
             if info['info']:
                 self.icon_window.load_next(info['info'])

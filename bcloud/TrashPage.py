@@ -201,10 +201,12 @@ class TrashPage(Gtk.Box):
         self.loading_spin.hide()
         if not info:
             self.app.toast(_('Network error'))
-        elif info.get('errno', -1) != 0:
+        elif info.get('errno', -1) != 0 and info.get('errno', -1) != 31034:
             self.app.toast(info.get('error_msg', _('Network error')))
+
         if error or not info or info.get('errno', -1) != 0:
-            logger.error('TrashPage.append_filelist: %s, %s' % (info, error))
+            if error or not info or info.get('errno', -1) != 31034:
+                logger.error('TrashPage.append_filelist: %s, %s' % (info, error))
             return
         for pcs_file in info['list']:
             self.filelist.append(pcs_file)
