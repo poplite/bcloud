@@ -22,10 +22,12 @@ from bcloud import util
 
 
 (TASKID_COL, NAME_COL, PATH_COL, SOURCEURL_COL, SIZE_COL, FINISHED_COL,
-    STATUS_COL, PERCENT_COL, HUMANSIZE_COL, TOOLTIP_COL) = list(range(10))
+    STATUS_COL, STATUSNAME_COL, PERCENT_COL, HUMANSIZE_COL, TOOLTIP_COL) = list(range(11))
 
-Status = (0, 1, )
-StatusNames = (_('FINISHED'), _('DOWNLOADING'), )
+(STATUS_FINISHED, STATUS_DOWNLOADING, STATUS_FAILED) = list(range(3))
+
+Status = ((0, 8, 10, ), (1, ), (2, 3, 4, 5, 6, 7, 9, ), )
+StatusNames = (_('FINISHED'), _('DOWNLOADING'), _('FAILED'), )
 
 
 class CloudPage(Gtk.Box):
@@ -134,9 +136,9 @@ class CloudPage(Gtk.Box):
         self.pack_start(scrolled_win, True, True, 0)
 
         # task_id, name, path, source_url, size, finished_size,
-        # status, percent, human_size, tooltip
+        # status, status_name, percent, human_size, tooltip
         self.liststore = Gtk.ListStore(str, str, str, str, GObject.TYPE_INT64,
-                                       GObject.TYPE_INT64, int, int, str, str)
+                                       GObject.TYPE_INT64, int, str, int, str, str)
         self.treeview = Gtk.TreeView(model=self.liststore)
         self.treeview.set_headers_clickable(True)
         self.treeview.set_reorderable(True)
@@ -161,7 +163,7 @@ class CloudPage(Gtk.Box):
 
         percent_cell = Gtk.CellRendererProgress()
         percent_col = Gtk.TreeViewColumn(_('Progress'), percent_cell,
-                                         value=PERCENT_COL)
+                                         value=PERCENT_COL, text=STATUSNAME_COL)
         self.treeview.append_column(percent_col)
         percent_col.props.min_width = 145
         percent_col.set_sort_column_id(PERCENT_COL)
@@ -196,6 +198,7 @@ class CloudPage(Gtk.Box):
                     0,
                     0,
                     int(task['status']),
+                    '0%',
                     0,
                     '0',
                     gutil.escape(task['save_path'])
@@ -242,6 +245,13 @@ class CloudPage(Gtk.Box):
                 if row[SIZE_COL]:
                     row[PERCENT_COL] = int(
                             row[FINISHED_COL] / row[SIZE_COL] * 100)
+                for status_ in (STATUS_FINISHED, STATUS_DOWNLOADING, STATUS_FAILED):
+                    if row[STATUS_COL] in Status[status_]:
+                        if status_ == STATUS_DOWNLOADING:
+                            row[STATUSNAME_COL] = '{0}%'.format(row[PERCENT_COL])
+                        else:
+                            row[STATUSNAME_COL] = StatusNames[status_]
+                        break
                 size = util.get_human_size(row[SIZE_COL])[0]
                 finished_size = util.get_human_size(row[FINISHED_COL])[0]
                 if row[SIZE_COL] == row[FINISHED_COL]:
