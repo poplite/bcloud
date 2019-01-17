@@ -238,26 +238,22 @@ def disable_share(cookie, tokens, shareid_list):
     else:
         return None
 
-def enable_private_share(cookie, tokens, fid_list, period=0):
+def enable_private_share(cookie, tokens, fid_list, passwd, period=0):
     '''建立新的私密分享.
 
     密码是在本地生成的, 然后上传到服务器.
     '''
-    print('enable private share:', fid_list, cookie, tokens)
     url = ''.join([
         const.PAN_URL,
         'share/set?channel=chunlei&clienttype=0&web=1&app_id=250528',
         '&bdstoken=', tokens['bdstoken'],
     ])
-    print('url:', url)
-    passwd = 'dmlg'
     data = encoder.encode_uri(''.join([
         'schannel=4&channel_list=[]',
         '&fid_list=', json.dumps(fid_list),
         '&period=', str(period),
         '&pwd=', passwd,
         ]))
-    print('data:', data)
     req = net.urlopen(url, headers={
         'Cookie': cookie.header_output(),
         'Content-type': const.CONTENT_FORM_UTF8,

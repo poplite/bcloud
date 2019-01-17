@@ -51,6 +51,8 @@ CONTENT_FORM_UTF8 = CONTENT_FORM + '; charset=UTF-8'
 ACCEPT_HTML = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
 ACCEPT_JSON = 'application/json, text/javascript, */*; q=0.8'
 
+## 分享提取码字符表
+SHARE_PWD_TABLE = '123456789abcdefghijklmnopqrstuvwxyz'
 
 class State:
     '''下载状态常量'''
@@ -76,9 +78,17 @@ class UploadMode:
     OVERWRITE = 1
     NEWCOPY = 2
 
+class SHARE_PERIOD:
+    '''分享的有效期'''
+    FOREVER = 0
+    ONE_DAY = 1
+    SEVEN_DAYS = 2
+
 DownloadMode = UploadMode
 
 UPLOAD_ONDUP = ('', 'overwrite', 'newcopy')
+
+SHARE_PERIOD_NUM = (0, 1, 7)
 
 # 视图模式
 ICON_VIEW, TREE_VIEW = 0, 1
