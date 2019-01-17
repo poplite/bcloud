@@ -242,7 +242,7 @@ class SharePage(Gtk.Box):
         self.url_entry.props.secondary_icon_name = ABORT_ICON
         self.page = 0
         self.has_next = True
-        self.curr_url = self.url_entry.get_text()
+        self.curr_url = self.url_entry.get_text().strip()
         self.dirname = pcs.get_share_dirname(self.curr_url)
         gutil.async_call(pcs.get_share_uk_and_shareid, self.app.cookie,
                          self.curr_url, callback=on_get_share_uk)
