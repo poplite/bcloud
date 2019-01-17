@@ -1,3 +1,11 @@
+v3.9.4 - 2019.01.17 <UNOFFICIAL>
+* Fixed: failed to fetch streaming media link
+* Feature: cloud unzip
+* Feature: add period, password setting for Share/Private Share
+* Feature: more download state for CloudPage and DownloadPage
+* update get_download_link() API
+* ignore some smail network errors to improve user experience
+
 v3.9.3 - 2018.02.04 <UNOFFICIAL>
 * Fixed: failed to get bdstoken
 * Fixed: support chinese verifycode
