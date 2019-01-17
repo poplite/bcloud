@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-17 22:40+0800\n"
+"POT-Creation-Date: 2019-01-18 00:22+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -522,7 +522,7 @@ msgid "Broken file"
 msgstr ""
 
 #: ../bcloud/IconWindow.py:607
-msgid "File size limit exceeded (2GB)"
+msgid "File size limit exceeded (500MB)"
 msgstr ""
 
 #: ../bcloud/IconWindow.py:610

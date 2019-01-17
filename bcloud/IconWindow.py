@@ -604,7 +604,7 @@ class IconWindow(Gtk.ScrolledWindow):
                 self.app.toast(_('Broken file'))
                 return
             elif info[0]['errno'] == 31183:
-                self.app.toast(_('File size limit exceeded (2GB)'))
+                self.app.toast(_('File size limit exceeded (500MB)'))
                 return
             elif info[0]['errno'] == 31184:
                 self.app.toast(_('Unsupported file'))
