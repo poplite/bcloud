@@ -20,13 +20,14 @@ from bcloud import Config
 _ = Config._
 from bcloud import const
 from bcloud.const import TargetInfo, TargetType
+from bcloud.CreateShareDialog import CreatePublicShareDialog
+from bcloud.CreateShareDialog import CreatePrivateShareDialog
 from bcloud.FolderBrowserDialog import FolderBrowserDialog
 from bcloud.NewFolderDialog import NewFolderDialog
 from bcloud.PropertiesDialog import PropertiesDialog
 from bcloud.PropertiesDialog import FolderPropertyDialog
 from bcloud.RenameDialog import RenameDialog
-from bcloud.CreateShareDialog import CreatePublicShareDialog
-from bcloud.CreateShareDialog import CreatePrivateShareDialog
+from bcloud.UnzipBrowserDialog import UnzipBrowserDialog
 from bcloud import gutil
 from bcloud.log import logger
 from bcloud import pcs
@@ -36,6 +37,7 @@ from bcloud import util
     ISDIR_COL, MTIME_COL, HUMAN_MTIME_COL, TYPE_COL, PCS_FILE_COL) = list(
             range(11))
 TYPE_TORRENT = 'application/x-bittorrent'
+TYPE_SUPPORT_UNZIP = ('application/zip', 'application/rar')
 
 DRAG_TARGETS = (
     # 用于拖拽下载
@@ -291,6 +293,12 @@ class IconWindow(Gtk.ScrolledWindow):
                     cloud_download_item.connect('activate',
                             self.on_cloud_download_item_activated)
                     menu.append(cloud_download_item)
+                elif file_type in TYPE_SUPPORT_UNZIP:
+                    cloud_unzip_item = Gtk.MenuItem.new_with_label(
+                            _('Cloud Unzip'))
+                    cloud_unzip_item.connect('activate',
+                            self.on_cloud_unzip_item_activated)
+                    menu.append(cloud_unzip_item)
                 default_app_info = Gio.AppInfo.get_default_for_type(file_type,
                                                                     False)
                 app_infos = Gio.AppInfo.get_recommended_for_type(file_type)
@@ -549,6 +557,75 @@ class IconWindow(Gtk.ScrolledWindow):
         pcs_files = [self.get_pcs_file(p) for p in tree_paths]
         self.app.blink_page(self.app.download_page)
         self.app.download_page.add_tasks(pcs_files, dirname)
+
+    def on_cloud_unzip_item_activated(self, menu_item):
+        def on_do_extract(info, error=None):
+            if error or not info[0] or info[0]['error_code'] != 0:
+                logger.error('IconWindow.on_do_extract: %s, %s' %
+                        (info, error))
+                self.app.toast(_('Error occurred while extracting'))
+                return
+            self.app.toast(_('Extracted successfully'))
+
+        def do_extract(path):
+            '''选择压缩包中需要解压的文件，解压到指定位置'''
+            unzip_dialog = UnzipBrowserDialog(self.app, path)
+            response = unzip_dialog.run()
+            selected_paths = unzip_dialog.get_selected_paths()
+            unzip_dialog.destroy()
+            if response != Gtk.ResponseType.OK or not selected_paths:
+                return
+            folder_browser = FolderBrowserDialog(self, self.app, _('Extract to..'))
+            response = folder_browser.run()
+            save_path = folder_browser.get_path()
+            folder_browser.destroy()
+            if response != Gtk.ResponseType.OK or not save_path:
+                return
+            for subpath in selected_paths:
+                gutil.async_call(pcs.unzip_extract, self.app.cookie,
+                                 path, save_path, subpath, True, callback=on_do_extract)
+
+        def on_before_extract(info, error=None):
+            '''检查压缩包能否可以解压'''
+            if error or not info[0]:
+                logger.error('IconWindow.on_before_extract: %s, %s' %
+                            (info, error))
+                self.app.toast(_('Unknown error'))
+                return
+            elif 'time' in info[0]:
+                logger.debug('IconWindow.on_before_extract: extracting %s, %s' %
+                            (info[1], info[0]))
+                self.app.toast(_('Extracting'))
+                return
+            elif info[0]['errno'] == 31180:
+                self.app.toast(_('Password needed'))
+                return
+            elif info[0]['errno'] == 31182:
+                self.app.toast(_('Broken file'))
+                return
+            elif info[0]['errno'] == 31183:
+                self.app.toast(_('File size limit exceeded (2GB)'))
+                return
+            elif info[0]['errno'] == 31184:
+                self.app.toast(_('Unsupported file'))
+                return
+            elif info[0]['errno'] != 0:
+                logger.error('IconWindow.on_before_extract: %s, %s' %
+                            (info, error))
+                self.app.toast(_('Unable to unzip file'))
+                return
+            else:
+                file_info, path = info
+                do_extract(path)
+
+        tree_paths = self.iconview.get_selected_items()
+        if not tree_paths:
+            return
+        for tree_path in tree_paths:
+            gutil.async_call(pcs.unzip_view, self.app.cookie,
+                             self.app.tokens,
+                             self.liststore[tree_paths[0]][PATH_COL],
+                             '/', 0, 0, True, callback=on_before_extract)
 
     def on_share_activated(self, menu_item):
         tree_paths = self.iconview.get_selected_items()

@@ -702,7 +702,7 @@ def copy(cookie, tokens, filelist):
     else:
         return None
 
-def unzip_view(cookie, tokens, path, subpath="/", start=0, limit=100):
+def unzip_view(cookie, tokens, path, subpath="/", start=0, limit=100, return_path=False):
     '''查看压缩包的文件列表
 
     path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
@@ -724,28 +724,32 @@ def unzip_view(cookie, tokens, path, subpath="/", start=0, limit=100):
         'Referer': const.SHARE_REFERER,
     })
     if req:
-        content = req.data
-        return json.loads(content.decode())
+        content = json.loads(req.data.decode())
     else:
-        return None
+        content = None
 
-def unzip_download(cookie, path, subpath):
-    '''获得压缩包里单独文件的下载链接
+    if return_path:
+        return content, path
+    else:
+        return content
 
-    path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
-    subpath - 需要下载文件的相对路径
-    '''
-    url = ''.join([
-        const.PCS_URL,
-        'file?method=unzipdownload&app_id=250528',
-        '&path=', encoder.encode_uri_component(path),
-        '&subpath=', encoder.encode_uri_component(subpath),
-    ])
-    req = net.urlopen_without_redirect(url, headers={'Cookie': cookie.header_output()})
-    if req:
-        return req.getheader('Location')
-
-def unzip_extract(cookie, path, topath, subpath="/"):
+#def unzip_download(cookie, path, subpath):
+#    '''获得压缩包里单独文件的下载链接
+#
+#    path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
+#    subpath - 需要下载文件的相对路径
+#    '''
+#    url = ''.join([
+#        const.PCS_URL,
+#        'file?method=unzipdownload&app_id=250528',
+#        '&path=', encoder.encode_uri_component(path),
+#        '&subpath=', encoder.encode_uri_component(subpath),
+#    ])
+#    req = net.urlopen_without_redirect(url, headers={'Cookie': cookie.header_output()})
+#    if req:
+#        return req.getheader('Location')
+#
+def unzip_extract(cookie, path, topath, subpath="/", return_path=False):
     '''解压压缩包到指定路径
 
     path - 压缩包的绝对路径（支持2GB以内的rar,zip压缩包）
@@ -764,10 +768,14 @@ def unzip_extract(cookie, path, topath, subpath="/"):
         'Referer': const.SHARE_REFERER,
     })
     if req:
-        content = req.data
-        return json.loads(content.decode())
+        content = json.loads(req.data.decode())
     else:
-        return None
+        content = None
+
+    if return_path:
+        return content, path
+    else:
+        content
 
 def get_category(cookie, tokens, category, page=1):
     '''获取一个分类中的所有文件信息, 比如音乐/图片
