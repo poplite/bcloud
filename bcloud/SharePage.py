@@ -259,7 +259,7 @@ class SharePage(Gtk.Box):
             if timestamp != self.url_entry.timestamp:
                 logger.debug('SharePage.load_url, dirname not match, ignored')
                 return
-            if error or not filelist:
+            if error:
                 self.app.toast(
                         _('Failed to get files, please reload this page'))
                 logger.warn('SharePage.load_url: %s, %s, %s' %
@@ -270,7 +270,7 @@ class SharePage(Gtk.Box):
             tree_iters = []
 
             # 插入.. 点击后返回上个目录
-            if filelist and self.dirname and self.dirname != '/':
+            if self.dirname and self.dirname != '/':
                 parent_dirname = os.path.dirname(self.dirname)
                 pixbuf, type_ = self.app.mime.get(parent_dirname, True,
                                                   icon_size=ICON_SIZE)
