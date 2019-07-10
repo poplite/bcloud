@@ -351,42 +351,6 @@ def get_bdstoken(cookie):
     else:
         return None
 
-def generate_sign(sign1, sign3):
-    '''根据sign1和sign3参数生成sign参数.
-
-    算法来自于网盘主页源代码中的sign2.
-    '''
-    def s(j, r):
-        a = []
-        p = []
-        for q in range(0, 256):
-            a.append(ord(j[q % len(j)]))
-            p.append(q)
-
-        u = 0
-        for q in range(0, 256):
-            u = (u + p[q] + a[q]) % 256
-            t = p[q]
-            p[q] = p[u]
-            p[u] = t
-
-        i = 0
-        u = 0
-        o = bytearray(len(r))
-        for q in range(0, len(r)):
-            i = (i + 1) % 256
-            u = (u + p[i]) % 256
-            t = p[i]
-            p[i] = p[u]
-            p[u] = t
-            k = p[(p[i] + p[u]) % 256]
-            o[q] = ord(r[q]) ^ k
-
-        return o
-
-    sign = s(sign3, sign1)
-    return base64.b64encode(sign).decode()
-
 def get_sign_and_timestamp(cookie):
     '''获得部分API需要的timestamp和sign参数.'''
     req = net.urlopen(const.PAN_URL, headers={'Cookie': cookie.header_output()})
@@ -396,9 +360,10 @@ def get_sign_and_timestamp(cookie):
         sign3_match = re.findall('"sign3":"(.+)","timestamp"', content)
         timestamp_match = re.findall(',"timestamp":(\d+)', content)
         if len(sign1_match) == 1 and len(sign3_match) == 1 and len(timestamp_match) == 1:
+            timestamp = int(timestamp_match[0])
             sign1 = sign1_match[0]
             sign3 = sign3_match[0]
-            sign = generate_sign(sign1, sign3)
-            timestamp = int(timestamp_match[0])
-            return sign, timestamp
+            sign = util.RC4_encrypt(sign3, sign1)
+            if sign:
+                return sign, timestamp
     return None, None

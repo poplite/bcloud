@@ -17,6 +17,7 @@ import time
 from bcloud.const import ValidatePathState
 from bcloud.log import logger
 try:
+    from Crypto.Cipher import ARC4
     from Crypto.PublicKey import RSA
     from Crypto.Cipher import PKCS1_v1_5
 except (ImportError, ValueError):
@@ -164,6 +165,15 @@ def RSA_encrypt(public_key, message):
     rsakey = RSA.importKey(public_key)
     rsakey = PKCS1_v1_5.new(rsakey)
     encrypted = rsakey.encrypt(message.encode())
+    return base64.encodestring(encrypted).decode().replace('\n', '')
+
+def RC4_encrypt(key, message):
+    '''用RC4加密字符串'''
+    # 如果没能成功导入ARC4模块, 就直接返回空白字符串.
+    if not globals().get('ARC4'):
+        return ''
+    rc4 = ARC4.new(key)
+    encrypted = rc4.encrypt(message.encode())
     return base64.encodestring(encrypted).decode().replace('\n', '')
 
 def m3u8_to_m3u(pls):
