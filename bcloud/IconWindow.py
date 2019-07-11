@@ -418,33 +418,21 @@ class IconWindow(Gtk.ScrolledWindow):
             pass
 
     def launch_app_with_app_info(self, app_info):
-        def open_video_link(red_url, error=None):
-            '''得到视频最后地址后, 调用播放器直接播放'''
-            if error or not red_url:
-                logger.error('IconWindow.launch_app_with_app_info: %s, %s' %
-                             (red_url, error))
-                return
-            gutil.async_call(app_info.launch_uris, [red_url, ], None)
-
         def save_playlist(pls, error=None):
             '''先保存播放列表到临时目录, 再调用播放器直接打开这个播放列表
 
-            如果pls为None的话, 说明没能得到播放列表, 这时就需要使用之前的方
-            法, 先得到视频地址, 再用播放器去打开它.(此方法暂时失效)
             '''
-            if error or not pls or b'error_code' in pls:
-                # Unavailable due to user-agent check
-                #gutil.async_call(pcs.get_download_link, self.app.cookie,
-                #                 self.liststore[tree_paths[0]][PATH_COL],
-                #                 callback=open_video_link)
-                return
-            else:
+            if not error and pls and b'error_code' not in pls:
                 pls_filepath = os.path.join('/tmp',
                         pcs_file['server_filename'] + '.m3u8')
                 with open(pls_filepath, 'wb') as fh:
                     fh.write(pls)
                 pls_file_uri = 'file://' + pls_filepath
                 app_info.launch_uris([pls_file_uri, ], None)
+            else:
+                logger.error('IconWindow.launch_app_with_app_info: %s, %s' %
+                             (pls, error))
+                return
 
         # first, download this to load dir
         # then open it with app_info
@@ -455,15 +443,10 @@ class IconWindow(Gtk.ScrolledWindow):
         file_type = self.liststore[tree_path][TYPE_COL]
         pcs_file = self.get_pcs_file(tree_path)
         # 'media' 对应于rmvb格式.
-        # 如果是视频等多媒体格式的话, 默认是直接调用播放器进行网络播放的
-        if 'video' in file_type or 'media' in file_type:
-            if self.app.profile['use-streaming']:
-                gutil.async_call(pcs.get_streaming_playlist, self.app.cookie,
-                                 pcs_file['path'], callback=save_playlist)
-            #else:
-            #    gutil.async_call(pcs.get_download_link, self.app.cookie,
-            #                     self.liststore[tree_paths[0]][PATH_COL],
-            #                     callback=open_video_link)
+        # 如果是视频等多媒体格式的话, 流媒体模式下是直接调用播放器进行网络播放的
+        if self.app.profile['use-streaming'] and ('video' in file_type or 'media' in file_type):
+            gutil.async_call(pcs.get_streaming_playlist, self.app.cookie,
+                             pcs_file['path'], callback=save_playlist)
         else:
             self.app.blink_page(self.app.download_page)
             self.app.download_page.add_launch_task(pcs_file, app_info)

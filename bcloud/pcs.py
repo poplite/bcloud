@@ -323,7 +323,18 @@ def get_share_uk_and_shareid(cookie, url):
         else:
             return None, None
 
-    def parse_surl_from_url(url):
+    def parse_share_uk_from_url(url):
+        uk_reg = re.compile('uk=(\d+)')
+        uk_match = uk_reg.search(url)
+        shareid_reg = re.compile('shareid=(\d+)')
+        shareid_match = shareid_reg.search(url)
+        if not uk_match or not shareid_match:
+            return '', ''
+        uk = uk_match.group(1)
+        shareid = shareid_match.group(1)
+        return uk, shareid
+
+    def parse_surl(url):
         surl_reg1 = re.compile('surl=(.+)')
         surl_match1 = surl_reg1.search(url)
         surl_reg2 = re.compile('/s/(.+)')
@@ -334,17 +345,6 @@ def get_share_uk_and_shareid(cookie, url):
             return surl_match2.group(1)
         else:
             return None
-
-    def parse_uk_from_url(url):
-        uk_reg = re.compile('uk=(\d+)')
-        uk_match = uk_reg.search(url)
-        shareid_reg = re.compile('shareid=(\d+)')
-        shareid_match = shareid_reg.search(url)
-        if not uk_match or not shareid_match:
-            return '', ''
-        uk = uk_match.group(1)
-        shareid = shareid_match.group(1)
-        return uk, shareid
 
     # 处理重定向
     MAX_REDIRECT = 5
@@ -361,15 +361,15 @@ def get_share_uk_and_shareid(cookie, url):
     # 处理加密链接
     if url.find('share/init') > -1 or url.find('wap/init') > -1:
         if url.find('init?surl') > -1:
-            surl = parse_surl_from_url(url)
+            surl = parse_surl(url)
             return True, surl
         else:
-            uk, shareid = parse_uk_from_url(url)
+            uk, shareid = parse_share_uk_from_url(url)
             return True, None, uk, shareid
 
     # 处理短链接
     if url.startswith('http://pan.baidu.com/s/') or url.startswith('https://pan.baidu.com/s/'):
-        surl = parse_surl_from_url(url)
+        surl = parse_surl(url)
         req = net.urlopen(url, headers={
             'Cookie': cookie.header_output(),
         })
@@ -377,9 +377,9 @@ def get_share_uk_and_shareid(cookie, url):
             uk, shareid = parse_share_uk(req.data.decode())
             return False, surl, uk, shareid
 
-    # 处理正常链接
-    surl = parse_surl_from_url(url)
-    uk, shareid = parse_uk_from_url(url)
+    # 处理其他链接
+    surl = parse_surl(url)
+    uk, shareid = parse_share_uk_from_url(url)
     return False, surl, uk, shareid
 
 def get_share_dirname(url):
@@ -811,39 +811,8 @@ def get_download_link(cookie, path):
     '''获取文件的下载链接.
 
     path - 一个文件的绝对路径.
-    '''
-    #if 'sign' not in tokens:
-    #    tokens['sign'], tokens['timestamp'] = auth.get_sign_and_timestamp(cookie)
-    #fidlist = [ int(fid) ]
-    #info = get_dlink_by_fsid(cookie, tokens, fidlist)
-    #if (not info or info.get('errno', -1) != 0 or
-    #        'dlink' not in info or len(info['dlink']) != 1):
-    #    logger.error('pcs.get_download_link(): %s' % info)
-    #    return None
-    #dlink = info['dlink'][0]['dlink']
-    #req = net.urlopen_without_redirect(dlink, headers={
-    #    'Cookie': cookie.cookie.header_output(),
-    #    'Accept': const.ACCEPT_HTML,
-    #})
-    #if not req:
-    #    return dlink
-    #else:
-    #    return req.getheader('Location', dlink)
 
-    info = get_dlink_by_path(cookie, path)
-
-    if (not info or 'urls' not in info or len(info['urls']) < 1):
-        logger.error('pcs.get_download_link(): %s' % info)
-        return None
-    else:
-        return info['urls'][0]['url']
-
-def get_dlink_by_path(cookie, path):
-    '''根据文件路径获得dlink
-
-    path - 一个文件的绝对路径.
-
-    返回数据的结构：
+    API返回的数据：
     {"client_ip":"xxxxxx","urls":[{"url":"xxxxxx","rank":1},{"url":"xxxxxx","rank":2}],"rank_param":{"max_continuous_failure":30,"bak_rank_slice_num":20},"sl":78,"max_timeout":30,"min_timeout":20,"request_id":xxxxxx}}
     '''
     url = ''.join([
@@ -862,34 +831,14 @@ def get_dlink_by_path(cookie, path):
     }, data=b' ') # Method: POST
 
     if req:
-        content = req.data
-        return json.loads(content.decode())
+        info = json.loads(req.data.decode())
+        if info and 'urls' in info and len(info['urls']) >= 1:
+            return info['urls'][0]['url']
+        else:
+            logger.error('pcs.get_download_link(): %s' % info)
+            return None
     else:
         return None
-
-#def get_dlink_by_fsid(cookie, tokens, fidlist):
-#    '''根据fs_id获得dlink, 需要timestamp和sign参数.
-#
-#    fidlist - fs_id列表, 可以只有一个fs_id.
-#    '''
-#    url = ''.join([
-#        const.PAN_API_URL,
-#        'download?type=dlink',
-#        '&channel=chunlei&web=1&app_id=250528clienttype=0',
-#        '&fidlist=', encoder.encode_uri_component(json.dumps(fidlist)),
-#        '&sign=', tokens['sign'],
-#        '&timestamp=', str(tokens['timestamp']),
-#        '&bdstoken=', tokens['bdstoken'],
-#    ])
-#    req = net.urlopen(url, headers={
-#        'Cookie': cookie.header_output(),
-#        'Referer': const.SHARE_REFERER,
-#    })
-#    if req:
-#        content = req.data
-#        return json.loads(content.decode())
-#    else:
-#        return None
 
 def batch_download(cookie, tokens, fidlist):
     '''批量下载多个文件, 需要timestamp和sign参数.
@@ -914,24 +863,6 @@ def batch_download(cookie, tokens, fidlist):
     if req:
         content = req.data
         return json.loads(content.decode())
-    else:
-        return None
-
-def stream_download(cookie, tokens, path):
-    '''下载流媒体文件.
-
-    path - 流文件的绝对路径.
-    '''
-    url = ''.join([
-        const.PCS_URL_D,
-        'file?method=download',
-        '&path=', encoder.encode_uri_component(path),
-        '&app_id=250528',
-    ])
-    req = net.urlopen_without_redirect(url, headers=
-            {'Cookie': cookie.header_output()})
-    if req:
-        return req
     else:
         return None
 
@@ -1075,15 +1006,12 @@ def create_superfile(cookie, path, block_list):
     else:
         return None
 
-
-def get_metas(cookie, tokens, filelist, dlink=True):
+def get_metas(cookie, tokens, filelist):
     '''获取多个文件的metadata.
 
     filelist - 一个list, 里面是每个文件的绝对路径.
                也可以是一个字符串, 只包含一个文件的绝对路径.
-    dlink    - 是否包含下载链接, 默认为True, 包含.
 
-    @return 包含了文件的下载链接dlink, 通过它可以得到最终的下载链接.
     '''
     if isinstance(filelist, str):
         filelist = [filelist, ]
@@ -1092,12 +1020,8 @@ def get_metas(cookie, tokens, filelist, dlink=True):
         'filemetas?channel=chunlei&clienttype=0&web=1&appid=250528',
         '&bdstoken=', tokens['bdstoken'],
     ])
-    if dlink:
-        data = ('dlink=1&target=' +
-                encoder.encode_uri_component(json.dumps(filelist)))
-    else:
-        data = ('dlink=0&target=' +
-                encoder.encode_uri_component(json.dumps(filelist)))
+    data = ('dlink=1&target=' +
+            encoder.encode_uri_component(json.dumps(filelist)))
     req = net.urlopen(url, headers={
         'Cookie': cookie.sub_output('BDUSS', 'SCRC', 'STOKEN'),
         'Content-type': const.CONTENT_FORM,
