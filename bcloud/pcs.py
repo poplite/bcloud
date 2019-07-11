@@ -880,7 +880,8 @@ def get_streaming_playlist(cookie, path, video_type='M3U8_AUTO_480'):
         '&type=', video_type,
         '&app_id=250528',
     ])
-    req = net.urlopen(url, headers={'Cookie': cookie.header_output()})
+    req = net.urlopen(url, headers={'Cookie': cookie.header_output(),
+                                    'User-Agent': const.USER_AGENT_NORMAL})
     if req:
         return req.data
     else:
